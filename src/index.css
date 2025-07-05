@@ -1,0 +1,182 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #1E97BA;
+  --secondary-color: #F26E22;
+  --background-color: #F5EFE0;
+  --accent-color: #D65625;
+}
+
+body {
+  @apply bg-background font-sans text-gray-800;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  @apply font-display;
+}
+
+.section-title {
+  @apply font-display text-4xl md:text-5xl text-secondary mb-6 relative;
+}
+
+.section-title::after {
+  content: '';
+  @apply absolute w-20 h-1 bg-primary bottom-0 left-0 mt-4;
+  transform: translateY(1rem);
+}
+
+.button-primary {
+  @apply bg-secondary hover:bg-accent text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-md;
+}
+
+.button-secondary {
+  @apply bg-transparent border-2 border-primary hover:bg-primary text-primary hover:text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95;
+}
+
+.card {
+  @apply bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-200;
+}
+
+.form-label {
+  @apply block text-gray-700 font-medium mb-2;
+}
+
+.package-card {
+  @apply relative overflow-hidden rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl;
+}
+
+.package-card:hover .package-image {
+  @apply transform scale-105;
+}
+
+.package-image {
+  @apply w-full h-48 md:h-56 object-cover transition-transform duration-500;
+}
+
+.package-content {
+  @apply p-6 bg-white;
+}
+
+.decorated-shape {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
+}
+
+.scroll-animation {
+  @apply opacity-0 transition-all duration-700;
+}
+
+.scroll-animation.animate {
+  @apply opacity-100;
+}
+
+/* Custom animated checkbox */
+.custom-checkbox {
+  @apply relative flex items-center;
+}
+
+.custom-checkbox input {
+  @apply absolute opacity-0 h-0 w-0;
+}
+
+.custom-checkbox .checkmark {
+  @apply w-5 h-5 rounded border border-gray-400 mr-2 flex items-center justify-center transition-all duration-200;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  @apply bg-primary border-primary;
+}
+
+.custom-checkbox .checkmark:after {
+  content: "";
+  @apply hidden;
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  @apply block w-2 h-3 border-r-2 border-b-2 border-white transform rotate-45 mt-[-2px];
+}
+
+/* Multi-step form progress */
+.progress-bar {
+  @apply w-full h-2 bg-gray-200 rounded-full mb-8;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-primary rounded-full transition-all duration-500;
+}
+
+.step-indicator {
+  @apply flex justify-between w-full mb-8;
+}
+
+.step {
+  @apply flex flex-col items-center;
+}
+
+.step-circle {
+  @apply w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center text-sm font-medium text-gray-500 bg-white mb-2 transition-all duration-300;
+}
+
+.step.active .step-circle {
+  @apply border-primary bg-primary text-white;
+}
+
+.step.completed .step-circle {
+  @apply border-primary bg-primary text-white;
+}
+
+.step-text {
+  @apply text-xs text-gray-500;
+}
+
+.step.active .step-text {
+  @apply text-primary font-medium;
+}
+
+/* Desert-themed custom styling */
+.desert-gradient {
+  background: linear-gradient(135deg, #F5EFE0 0%, #E3C780 100%);
+}
+
+.oasis-gradient {
+  background: linear-gradient(135deg, #1E97BA 0%, #085E7D 100%);
+}
+
+.sunset-gradient {
+  background: linear-gradient(135deg, #F26E22 0%, #D65625 100%);
+}
+
+.desert-card {
+  @apply relative bg-white rounded-xl overflow-hidden shadow-lg border border-desert-300;
+}
+
+.desert-card::before {
+  content: "";
+  @apply absolute inset-0 bg-desert-100 opacity-20;
+  z-index: -1;
+}
+
+.shaped-border {
+  --notch-size: 20px;
+  --border-radius: 12px;
+  clip-path: 
+    polygon(
+      0% var(--notch-size), 
+      var(--notch-size) 0%, 
+      calc(100% - var(--notch-size)) 0%, 
+      100% var(--notch-size),
+      100% calc(100% - var(--notch-size)),
+      calc(100% - var(--notch-size)) 100%,
+      var(--notch-size) 100%,
+      0% calc(100% - var(--notch-size))
+    );
+}
