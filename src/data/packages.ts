@@ -11,8 +11,9 @@ export const packages = [
     duration: "4 Days / 3 Nights",
     departureTime: "09:00 AM from Tunis",
     location: "Southern Tunisia, Tozeur",
-    groupSize: "8-12 People",
+    groupSize: "Limited to 100 People",
     accommodation: "Berber tent at îlot Palmier Tozeur",
+    capacity: 100,
     pricingTiers: {
       single: { original: 1275, discounted: 1084 },
       double: { original: 1056, discounted: 898 },
@@ -126,8 +127,9 @@ export const packages = [
     duration: "4 Days / 3 Nights",
     departureTime: "08:30 AM from Tunis",
     location: "Tozeur, Southern Tunisia",
-    groupSize: "6-10 People",
+    groupSize: "Limited to 300 People",
     accommodation: "5 stars hotel Palm Beach Tozeur",
+    capacity: 300,
     pricingTiers: {
       single: { original: 1150, discounted: 977 },
       double: { original: 1078, discounted: 916 },
@@ -176,8 +178,9 @@ export const packages = [
     duration: "4 Days / 3 Nights",
     departureTime: "09:30 AM from Tunis",
     location: "Anantara Sahara Tozeur Resort",
-    groupSize: "4-8 People",
+    groupSize: "Limited to 30 People",
     accommodation: "Deluxe Garden view Suite at Anantara Sahara Tozeur Resort & Villas",
+    capacity: 30,
     pricingTiers: {
       single: { original: 2284, discounted: 1939 },
       double: { original: 1387, discounted: 1632 }
