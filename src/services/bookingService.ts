@@ -38,6 +38,20 @@ export interface BookingWithDetails extends BookingRow {
   }>;
 }
 
+export interface PackageCapacityInfo {
+  packageId: number;
+  totalBooked: number;
+  capacity: number;
+  available: number;
+  isFull: boolean;
+}
+
+export interface DiscountInfo {
+  available: boolean;
+  remainingSlots: number;
+  totalPaidBookings: number;
+}
+
 class BookingService {
   // Generate a unique booking reference
   private generateBookingReference(): string {
@@ -46,8 +60,47 @@ class BookingService {
     return `ACE-${timestamp}-${random}`.toUpperCase();
   }
 
+  // Check package capacity
+  async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
+    try {
+      // Get package capacity from packages data
+      const packageCapacities = {
+        1: 100, // Platinum Pack
+        2: 300, // Diamond Pack
+        3: 30   // VIP Pack
+      };
+
+      const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 0;
+
+      // Count total people booked for this package (all statuses except cancelled)
+      const { data: bookings, error } = await supabase
+        .from('bookings')
+        .select('number_of_people')
+        .eq('package_id', packageId)
+        .neq('payment_status', 'cancelled');
+
+      if (error) {
+        throw new Error(`Failed to check package capacity: ${error.message}`);
+      }
+
+      const totalBooked = bookings?.reduce((sum, booking) => sum + booking.number_of_people, 0) || 0;
+      const available = Math.max(0, capacity - totalBooked);
+
+      return {
+        packageId,
+        totalBooked,
+        capacity,
+        available,
+        isFull: available === 0
+      };
+    } catch (error) {
+      console.error('Error checking package capacity:', error);
+      throw error;
+    }
+  }
+
   // Check if discount is available (first 100 payments)
-  async checkDiscountAvailability(): Promise<{ available: boolean; remainingSlots: number }> {
+  async checkDiscountAvailability(): Promise<DiscountInfo> {
     try {
       const { count, error } = await supabase
         .from('bookings')
@@ -60,21 +113,72 @@ class BookingService {
         throw new Error(`Failed to check discount availability: ${error.message}`);
       }
 
-      const paidCount = count || 0;
+      const totalPaidBookings = count || 0;
       return {
-        available: paidCount < 100,
-        remainingSlots: Math.max(0, 100 - paidCount)
+        available: totalPaidBookings < 100,
+        remainingSlots: Math.max(0, 100 - totalPaidBookings),
+        totalPaidBookings
       };
     } catch (error) {
       console.error('Error checking discount availability:', error);
-      return { available: false, remainingSlots: 0 };
+      return { available: false, remainingSlots: 0, totalPaidBookings: 0 };
+    }
+  }
+
+  // Validate booking before creation
+  async validateBooking(packageId: number, numberOfPeople: number): Promise<{ valid: boolean; error?: string }> {
+    try {
+      // Check package capacity
+      const capacityInfo = await this.checkPackageCapacity(packageId);
+      
+      if (capacityInfo.isFull) {
+        return {
+          valid: false,
+          error: `Sorry, this package is fully booked. No more spots available.`
+        };
+      }
+
+      if (numberOfPeople > capacityInfo.available) {
+        return {
+          valid: false,
+          error: `Only ${capacityInfo.available} spots remaining for this package. Please reduce the number of travelers or choose a different package.`
+        };
+      }
+
+      return { valid: true };
+    } catch (error) {
+      console.error('Error validating booking:', error);
+      return {
+        valid: false,
+        error: 'Unable to validate booking availability. Please try again.'
+      };
     }
   }
 
   // Create a new booking with all related data
   async createBooking(data: CreateBookingData): Promise<{ booking: BookingRow; bookingReference: string }> {
     try {
+      // Validate booking first
+      const validation = await this.validateBooking(data.packageId, data.numberOfPeople);
+      if (!validation.valid) {
+        throw new Error(validation.error);
+      }
+
       const bookingReference = this.generateBookingReference();
+
+      // Check if discount should be applied
+      const discountInfo = await this.checkDiscountAvailability();
+      const shouldApplyDiscount = discountInfo.available;
+
+      // Calculate prices with potential discount
+      let finalTotalPrice = data.totalPrice;
+      let originalPrice = data.totalPrice;
+      let discountAmount = 0;
+
+      if (shouldApplyDiscount) {
+        discountAmount = Math.round(data.totalPrice * 0.15 * 100) / 100; // 15% discount, rounded to 2 decimals
+        finalTotalPrice = Math.round((data.totalPrice - discountAmount) * 100) / 100;
+      }
 
       // Insert the main booking record
       const bookingData: BookingInsert = {
@@ -82,7 +186,10 @@ class BookingService {
         package_id: data.packageId,
         package_title: data.packageTitle,
         base_price: data.basePrice,
-        total_price: data.totalPrice,
+        total_price: finalTotalPrice,
+        original_price: shouldApplyDiscount ? originalPrice : null,
+        discount_applied: shouldApplyDiscount,
+        discount_amount: shouldApplyDiscount ? discountAmount : 0,
         selected_options: data.selectedOptions,
         number_of_people: data.numberOfPeople,
         payment_status: 'pending',
@@ -232,6 +339,20 @@ class BookingService {
       return bookings as BookingWithDetails[];
     } catch (error) {
       console.error('Error fetching all bookings:', error);
+      throw error;
+    }
+  }
+
+  // Get package statistics
+  async getPackageStatistics(): Promise<PackageCapacityInfo[]> {
+    try {
+      const packageIds = [1, 2, 3];
+      const statistics = await Promise.all(
+        packageIds.map(id => this.checkPackageCapacity(id))
+      );
+      return statistics;
+    } catch (error) {
+      console.error('Error fetching package statistics:', error);
       throw error;
     }
   }

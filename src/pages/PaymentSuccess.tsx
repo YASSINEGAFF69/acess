@@ -301,7 +301,7 @@ const PaymentSuccess: React.FC = () => {
                       <span className="line-through">${(originalPrice * booking.number_of_people).toFixed(2)} USD</span>
                     </div>
                     <div className="flex justify-between mb-2 text-green-600">
-                      <span>Early Bird Discount (10%):</span>
+                      <span>Early Bird Discount (15%):</span>
                       <span>-${booking.discount_amount} USD</span>
                     </div>
                     <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300">

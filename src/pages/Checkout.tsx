@@ -109,8 +109,8 @@ const Checkout: React.FC = () => {
       // Calculate total price in USD cents
       const totalPriceUSD = bookingData.totalPrice * bookingPersonsData.numberOfPeople;
       
-      // Apply discount if available
-      const finalPriceUSD = discountInfo.available ? totalPriceUSD * 0.9 : totalPriceUSD;
+      // Apply 15% discount if available (first 100 payments)
+      const finalPriceUSD = discountInfo.available ? totalPriceUSD * 0.85 : totalPriceUSD;
       const totalInCents = Math.round(finalPriceUSD * 100);
 
       // Get primary contact person details
@@ -208,7 +208,7 @@ const Checkout: React.FC = () => {
   
   // Calculate final total price
   const totalPrice = bookingData.totalPrice * bookingPersonsData.numberOfPeople;
-  const finalPrice = discountInfo.available ? totalPrice * 0.9 : totalPrice;
+  const finalPrice = discountInfo.available ? totalPrice * 0.85 : totalPrice; // 15% discount for first 100
   
   return (
     <div className="pt-24 pb-20 bg-desert-50">
@@ -249,7 +249,7 @@ const Checkout: React.FC = () => {
                   <div>
                     <h3 className="text-xl font-bold">🎉 Special Discount Available!</h3>
                     <p className="text-green-100">
-                      You're eligible for a 10% discount! Only {discountInfo.remainingSlots} spots left in our first 100 payments promotion.
+                      You're eligible for a 15% discount! Only {discountInfo.remainingSlots} spots left in our first 100 payments promotion.
                     </p>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ const Checkout: React.FC = () => {
                       </>
                     )}
                     
-                    <div className="flex justify-between mb-1">
+                    <div className="flex justify-between mb-2">
                       <span className="text-gray-600">Price per person:</span>
                       <span>${bookingData.totalPrice} USD</span>
                     </div>
@@ -311,8 +311,8 @@ const Checkout: React.FC = () => {
                           <span>${totalPrice.toFixed(2)} USD</span>
                         </div>
                         <div className="flex justify-between mb-1 text-green-600">
-                          <span>Early Bird Discount (10%):</span>
-                          <span>-${(totalPrice * 0.1).toFixed(2)} USD</span>
+                          <span>Early Bird Discount (15%):</span>
+                          <span>-${(totalPrice * 0.15).toFixed(2)} USD</span>
                         </div>
                       </>
                     )}
@@ -437,7 +437,7 @@ const Checkout: React.FC = () => {
                               Pay ${finalPrice.toFixed(2)} USD
                               {discountInfo.available && (
                                 <span className="ml-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                                  10% OFF
+                                  15% OFF
                                 </span>
                               )}
                             </>

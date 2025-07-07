@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, Users, Clock, MapPin, Check, ChevronsRight, Star, Percent } from 'lucide-react';
+import { Calendar, Users, Clock, MapPin, Check, ChevronsRight, Star, Percent, AlertTriangle, Loader2 } from 'lucide-react';
 import { packages } from '../data/packages';
 import { useBooking } from '../contexts/BookingContext';
+import { bookingService, type PackageCapacityInfo } from '../services/bookingService';
 
 const PackageDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,11 +17,19 @@ const PackageDetail: React.FC = () => {
   const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
   const [selectedTier, setSelectedTier] = useState<string>('single');
   const [totalPrice, setTotalPrice] = useState(packageData?.price || 0);
+  const [capacityInfo, setCapacityInfo] = useState<PackageCapacityInfo | null>(null);
+  const [isLoadingCapacity, setIsLoadingCapacity] = useState(true);
+  const [capacityError, setCapacityError] = useState<string | null>(null);
 
   useEffect(() => {
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Load package capacity info
+    if (packageData) {
+      loadCapacityInfo();
+    }
+  }, [packageData]);
   
   useEffect(() => {
     // Calculate total price based on selected tier and options
@@ -42,6 +51,22 @@ const PackageDetail: React.FC = () => {
       setTotalPrice(total);
     }
   }, [packageData, selectedOptions, selectedTier]);
+
+  const loadCapacityInfo = async () => {
+    if (!packageData) return;
+    
+    try {
+      setIsLoadingCapacity(true);
+      setCapacityError(null);
+      const info = await bookingService.checkPackageCapacity(packageData.id);
+      setCapacityInfo(info);
+    } catch (error) {
+      console.error('Error loading capacity info:', error);
+      setCapacityError('Unable to load availability information');
+    } finally {
+      setIsLoadingCapacity(false);
+    }
+  };
   
   if (!packageData) {
     return (
@@ -69,6 +94,12 @@ const PackageDetail: React.FC = () => {
   };
   
   const handleBookNow = () => {
+    // Check if package is available
+    if (capacityInfo?.isFull) {
+      alert('Sorry, this package is fully booked. Please choose a different package.');
+      return;
+    }
+
     // Get the base price for selected tier
     let basePrice = packageData.price;
     if (packageData.pricingTiers && packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers]) {
@@ -173,15 +204,15 @@ const PackageDetail: React.FC = () => {
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-desert-50 rounded-lg">
                   <Users className="h-8 w-8 text-primary mb-2" />
-                  <div className="text-gray-600 font-medium">{packageData.groupSize}</div>
+                  <div className="text-gray-600 font-medium text-center">{packageData.groupSize}</div>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-desert-50 rounded-lg">
                   <Clock className="h-8 w-8 text-primary mb-2" />
-                  <div className="text-gray-600 font-medium">{packageData.departureTime}</div>
+                  <div className="text-gray-600 font-medium text-center">{packageData.departureTime}</div>
                 </div>
                 <div className="flex flex-col items-center justify-center p-4 bg-desert-50 rounded-lg">
                   <MapPin className="h-8 w-8 text-primary mb-2" />
-                  <div className="text-gray-600 font-medium">{packageData.location}</div>
+                  <div className="text-gray-600 font-medium text-center">{packageData.location}</div>
                 </div>
               </div>
 
@@ -258,8 +289,75 @@ const PackageDetail: React.FC = () => {
             <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
               <h3 className="font-display text-2xl font-bold mb-4 text-gray-800">Book This Package</h3>
               
+              {/* Availability Status */}
+              {isLoadingCapacity ? (
+                <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                    <span className="text-gray-600">Checking availability...</span>
+                  </div>
+                </div>
+              ) : capacityError ? (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                    <span className="text-red-700 text-sm">{capacityError}</span>
+                  </div>
+                </div>
+              ) : capacityInfo ? (
+                <div className={`mb-6 p-4 rounded-lg ${
+                  capacityInfo.isFull 
+                    ? 'bg-red-50 border border-red-200' 
+                    : capacityInfo.available <= 10 
+                      ? 'bg-yellow-50 border border-yellow-200'
+                      : 'bg-green-50 border border-green-200'
+                }`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    {capacityInfo.isFull ? (
+                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                    ) : (
+                      <Users className="h-5 w-5 text-primary" />
+                    )}
+                    <span className={`font-medium ${
+                      capacityInfo.isFull 
+                        ? 'text-red-700' 
+                        : capacityInfo.available <= 10 
+                          ? 'text-yellow-700'
+                          : 'text-green-700'
+                    }`}>
+                      {capacityInfo.isFull ? 'Fully Booked' : 'Available Spots'}
+                    </span>
+                  </div>
+                  
+                  {!capacityInfo.isFull && (
+                    <div className="text-sm text-gray-600">
+                      <div className="flex justify-between mb-1">
+                        <span>Available:</span>
+                        <span className="font-medium">{capacityInfo.available} spots</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total Capacity:</span>
+                        <span className="font-medium">{capacityInfo.capacity} spots</span>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {capacityInfo.isFull && (
+                    <p className="text-red-700 text-sm">
+                      This package is currently sold out. Please check back later or choose a different package.
+                    </p>
+                  )}
+                  
+                  {capacityInfo.available <= 10 && !capacityInfo.isFull && (
+                    <p className="text-yellow-700 text-sm mt-2">
+                      ⚡ Only {capacityInfo.available} spots left! Book now to secure your place.
+                    </p>
+                  )}
+                </div>
+              ) : null}
+              
               {/* Pricing Tiers */}
-              {packageData.pricingTiers && (
+              {packageData.pricingTiers && !capacityInfo?.isFull && (
                 <div className="mb-6">
                   <h4 className="font-bold text-lg mb-3 text-gray-800">Select Occupancy</h4>
                   <div className="space-y-2">
@@ -293,7 +391,7 @@ const PackageDetail: React.FC = () => {
               )}
               
               {/* Options Selection */}
-              {packageData.options && packageData.options.length > 0 && (
+              {packageData.options && packageData.options.length > 0 && !capacityInfo?.isFull && (
                 <div className="mb-6">
                   <h4 className="font-bold text-lg mb-3 text-gray-800">Add-on Options</h4>
                   
@@ -319,25 +417,43 @@ const PackageDetail: React.FC = () => {
               )}
               
               {/* Total Price */}
-              <div className="mb-6 pb-4 border-t border-b border-gray-200 py-4">
-                <div className="flex justify-between items-center">
-                  <div className="font-medium">Total Price:</div>
-                  <div className="text-2xl font-bold text-secondary">${totalPrice} USD</div>
+              {!capacityInfo?.isFull && (
+                <div className="mb-6 pb-4 border-t border-b border-gray-200 py-4">
+                  <div className="flex justify-between items-center">
+                    <div className="font-medium">Total Price:</div>
+                    <div className="text-2xl font-bold text-secondary">${totalPrice} USD</div>
+                  </div>
+                  <div className="text-sm text-gray-500 text-right">Per person</div>
                 </div>
-                <div className="text-sm text-gray-500 text-right">Per person</div>
-              </div>
+              )}
               
               <button 
                 onClick={handleBookNow}
-                className="button-primary w-full flex items-center justify-center gap-2"
+                disabled={capacityInfo?.isFull}
+                className={`w-full flex items-center justify-center gap-2 ${
+                  capacityInfo?.isFull 
+                    ? 'bg-gray-400 cursor-not-allowed text-white py-3 px-6 rounded-full'
+                    : 'button-primary'
+                }`}
               >
-                <span>Book Now</span>
-                <ChevronsRight className="h-5 w-5" />
+                {capacityInfo?.isFull ? (
+                  <>
+                    <AlertTriangle className="h-5 w-5" />
+                    <span>Fully Booked</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Book Now</span>
+                    <ChevronsRight className="h-5 w-5" />
+                  </>
+                )}
               </button>
               
-              <div className="mt-4 text-center text-sm text-gray-500">
-                No payment required now. You'll complete payment after reservation.
-              </div>
+              {!capacityInfo?.isFull && (
+                <div className="mt-4 text-center text-sm text-gray-500">
+                  No payment required now. You'll complete payment after reservation.
+                </div>
+              )}
             </div>
           </div>
         </div>

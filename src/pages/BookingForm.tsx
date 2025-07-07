@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2 } from 'lucide-react';
+import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useBooking } from '../contexts/BookingContext';
 import { packages } from '../data/packages';
 import { bookingService } from '../services/bookingService';
@@ -34,6 +34,7 @@ const BookingForm: React.FC = () => {
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [capacityError, setCapacityError] = useState<string | null>(null);
   
   const { register, handleSubmit, formState: { errors }, watch, trigger } = useForm<BookingFormData>({
     defaultValues: {
@@ -58,14 +59,45 @@ const BookingForm: React.FC = () => {
 
   // Watch the form values
   const watchNumberOfPeople = watch('numberOfPeople');
+  
   // Update people array when number of people changes
   useEffect(() => {
     if (watchNumberOfPeople !== numberOfPeople) {
       setNumberOfPeople(watchNumberOfPeople || 1);
+      // Clear capacity error when number changes
+      setCapacityError(null);
     }
   }, [watchNumberOfPeople, numberOfPeople]);
 
+  // Validate capacity when number of people changes
+  useEffect(() => {
+    if (bookingData && numberOfPeople > 1) {
+      validateCapacity();
+    }
+  }, [numberOfPeople, bookingData]);
+
+  const validateCapacity = async () => {
+    if (!bookingData) return;
+
+    try {
+      const validation = await bookingService.validateBooking(bookingData.packageId, numberOfPeople);
+      if (!validation.valid) {
+        setCapacityError(validation.error || 'Capacity limit exceeded');
+      } else {
+        setCapacityError(null);
+      }
+    } catch (error) {
+      console.error('Error validating capacity:', error);
+      setCapacityError('Unable to validate booking capacity');
+    }
+  };
+
   const handleNextStep = async () => {
+    // Check capacity first
+    if (capacityError) {
+      return;
+    }
+
     // Validate current step
     let fieldsToValidate: string[] = [];
     
@@ -105,6 +137,12 @@ const BookingForm: React.FC = () => {
   const onSubmit = async (data: BookingFormData) => {
     if (!bookingData || !packageData) {
       setSubmitError('Booking data is missing. Please start over.');
+      return;
+    }
+
+    // Final capacity check
+    if (capacityError) {
+      setSubmitError(capacityError);
       return;
     }
 
@@ -193,7 +231,7 @@ const BookingForm: React.FC = () => {
             </div>
           </div>
 
-          {/* Error Message */}
+          {/* Error Messages */}
           {submitError && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
               <div className="flex items-start">
@@ -201,6 +239,18 @@ const BookingForm: React.FC = () => {
                 <div>
                   <p className="text-red-800 text-sm font-medium">Booking Error</p>
                   <p className="text-red-700 text-sm mt-1">{submitError}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {capacityError && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <div className="flex items-start">
+                <AlertTriangle className="h-6 w-6 text-red-500 mr-3 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-red-800 text-sm font-medium">Capacity Limit Exceeded</p>
+                  <p className="text-red-700 text-sm mt-1">{capacityError}</p>
                 </div>
               </div>
             </div>
@@ -339,7 +389,10 @@ const BookingForm: React.FC = () => {
                     <button 
                       type="button" 
                       onClick={handleNextStep}
-                      className="button-primary flex items-center gap-2"
+                      disabled={capacityError !== null}
+                      className={`flex items-center gap-2 ${
+                        capacityError ? 'bg-gray-400 cursor-not-allowed text-white py-3 px-6 rounded-full' : 'button-primary'
+                      }`}
                     >
                       Continue
                       <ChevronRight className="h-5 w-5" />
