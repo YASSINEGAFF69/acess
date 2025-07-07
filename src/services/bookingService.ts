@@ -60,7 +60,7 @@ class BookingService {
     return `ACE-${timestamp}-${random}`.toUpperCase();
   }
 
-  // Check package capacity
+  // Check package capacity - ONLY COUNT PAID BOOKINGS
   async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
     try {
       // Get package capacity from packages data
@@ -72,12 +72,12 @@ class BookingService {
 
       const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 0;
 
-      // Count total people booked for this package (all statuses except cancelled)
+      // Count total people booked for this package - ONLY PAID BOOKINGS
       const { data: bookings, error } = await supabase
         .from('bookings')
         .select('number_of_people')
         .eq('package_id', packageId)
-        .neq('payment_status', 'cancelled');
+        .eq('payment_status', 'paid'); // ONLY COUNT PAID BOOKINGS
 
       if (error) {
         throw new Error(`Failed to check package capacity: ${error.message}`);
@@ -99,21 +99,22 @@ class BookingService {
     }
   }
 
-  // Check if discount is available (first 100 payments)
+  // Check if discount is available (first 100 PAID bookings only)
   async checkDiscountAvailability(): Promise<DiscountInfo> {
     try {
+      // Count only PAID bookings with payment_order assigned
       const { count, error } = await supabase
         .from('bookings')
         .select('*', { count: 'exact', head: true })
         .eq('payment_status', 'paid')
-        .not('payment_order', 'is', null)
-        .lte('payment_order', 100);
+        .not('payment_order', 'is', null);
 
       if (error) {
         throw new Error(`Failed to check discount availability: ${error.message}`);
       }
 
       const totalPaidBookings = count || 0;
+      
       return {
         available: totalPaidBookings < 100,
         remainingSlots: Math.max(0, 100 - totalPaidBookings),
@@ -125,10 +126,10 @@ class BookingService {
     }
   }
 
-  // Validate booking before creation
+  // Validate booking before creation - CHECK AGAINST PAID BOOKINGS ONLY
   async validateBooking(packageId: number, numberOfPeople: number): Promise<{ valid: boolean; error?: string }> {
     try {
-      // Check package capacity
+      // Check package capacity (already only counts paid bookings)
       const capacityInfo = await this.checkPackageCapacity(packageId);
       
       if (capacityInfo.isFull) {
@@ -158,15 +159,12 @@ class BookingService {
   // Create a new booking with all related data
   async createBooking(data: CreateBookingData): Promise<{ booking: BookingRow; bookingReference: string }> {
     try {
-      // Validate booking first
-      const validation = await this.validateBooking(data.packageId, data.numberOfPeople);
-      if (!validation.valid) {
-        throw new Error(validation.error);
-      }
-
+      // Note: We don't validate capacity here for pending bookings since we only count paid ones
+      // This allows multiple people to book simultaneously without blocking each other
+      
       const bookingReference = this.generateBookingReference();
 
-      // Check if discount should be applied
+      // Check if discount should be applied (based on paid bookings only)
       const discountInfo = await this.checkDiscountAvailability();
       const shouldApplyDiscount = discountInfo.available;
 
@@ -343,7 +341,7 @@ class BookingService {
     }
   }
 
-  // Get package statistics
+  // Get package statistics - ONLY COUNT PAID BOOKINGS
   async getPackageStatistics(): Promise<PackageCapacityInfo[]> {
     try {
       const packageIds = [1, 2, 3];
