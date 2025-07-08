@@ -22,42 +22,44 @@ const ContactSection: React.FC = () => {
               icon: Phone,
               title: "Phone",
               content: "+216 20603070",
-              href: "tel:+21620603070"
+              href: "tel:+21620603070",
+              action: () => window.open("tel:+21620603070")
             },
             {
               icon: Globe,
               title: "Website",
               content: "www.aces-event.com",
-              href: "https://www.aces-event.com"
+              href: "https://www.aces-event.com",
+              action: () => window.open("https://www.aces-event.com", "_blank")
             },
             {
               icon: Mail,
               title: "Email",
               content: "aces.sarl.contact@gmail.com",
-              href: "mailto:aces.sarl.contact@gmail.com"
+              href: "mailto:aces.sarl.contact@gmail.com",
+              action: () => window.open("mailto:aces.sarl.contact@gmail.com")
             },
             {
               icon: MapPin,
               title: "Location",
               content: "Tunis, Tunisia",
-              href: "https://goo.gl/maps/Tunisia"
+              href: "https://goo.gl/maps/Tunisia",
+              action: () => window.open("https://goo.gl/maps/Tunisia", "_blank")
             }
           ].map((item, index) => (
-            <motion.a
+            <motion.button
               key={item.title}
-              href={item.href}
-              target="_blank"
-              rel="noopener noreferrer"
+              onClick={item.action}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="flex flex-col items-center p-6 bg-desert-50 rounded-xl hover:bg-desert-100 transition-colors"
+              className="flex flex-col items-center p-6 bg-desert-50 rounded-xl hover:bg-desert-100 transition-colors cursor-pointer w-full"
             >
               <item.icon className="h-8 w-8 text-primary mb-4" />
               <h3 className="font-bold text-lg mb-2">{item.title}</h3>
               <p className="text-gray-600 text-center">{item.content}</p>
-            </motion.a>
+            </motion.button>
           ))}
         </div>
       </div>

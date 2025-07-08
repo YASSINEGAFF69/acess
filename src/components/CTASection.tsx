@@ -44,19 +44,26 @@ const CTASection: React.FC = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.4 }}
           >
-            <Link 
-              to="/#packages" 
+            <button
+              onClick={() => {
+                const element = document.getElementById('packages');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               className="bg-white text-secondary hover:bg-gray-100 button-primary"
             >
               Explore Packages
-            </Link>
+            </button>
             
-            <Link 
-              to="/contact" 
+            <button
+              onClick={() => {
+                window.location.href = 'mailto:aces.sarl.contact@gmail.com';
+              }}
               className="border-2 border-white text-white hover:bg-white/20 font-bold py-3 px-6 rounded-full transition-all duration-300"
             >
               Contact Us
-            </Link>
+            </button>
           </motion.div>
         </div>
       </div>

@@ -33,11 +33,23 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-lg font-display font-bold mb-4 border-b border-gray-700 pb-2">Quick Links</h3>
             <ul className="space-y-2">
-              <FooterLink to="/">Home</FooterLink>
-              <FooterLink to="/#packages">Packages</FooterLink>
-              <FooterLink to="/#destinations">Destinations</FooterLink>
-              <FooterLink to="/#activities">Activities</FooterLink>
-              <FooterLink to="/#experiences">Experiences</FooterLink>
+              <FooterButton onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</FooterButton>
+              <FooterButton onClick={() => {
+                const element = document.getElementById('packages');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}>Packages</FooterButton>
+              <FooterButton onClick={() => {
+                const element = document.getElementById('destinations');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}>Destinations</FooterButton>
+              <FooterButton onClick={() => {
+                const element = document.getElementById('activities');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}>Activities</FooterButton>
+              <FooterButton onClick={() => {
+                const element = document.getElementById('experiences');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}>Experiences</FooterButton>
             </ul>
           </div>
           
@@ -48,13 +60,13 @@ const Footer: React.FC = () => {
                 <MapPin className="h-5 w-5 text-secondary mr-2 mt-0.5 flex-shrink-0" />
                 <span className="text-gray-400">Marsa, Tunisia</span>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center cursor-pointer" onClick={() => window.open('tel:+21620603070')}>
                 <Phone className="h-5 w-5 text-secondary mr-2 flex-shrink-0" />
-                <span className="text-gray-400">+216 20603070</span>
+                <span className="text-gray-400 hover:text-white transition-colors">+216 20603070</span>
               </li>
-              <li className="flex items-center">
+              <li className="flex items-center cursor-pointer" onClick={() => window.open('mailto:contact@aces-event.com')}>
                 <Mail className="h-5 w-5 text-secondary mr-2 flex-shrink-0" />
-                <span className="text-gray-400">contact@aces-event.com</span>
+                <span className="text-gray-400 hover:text-white transition-colors">contact@aces-event.com</span>
               </li>
             </ul>
           </div>
@@ -63,8 +75,18 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 pt-8 mt-8 text-center text-gray-500 text-sm">
           <p>&copy; {new Date().getFullYear()} ACES Tunisia. All rights reserved.</p>
           <div className="mt-4 flex justify-center space-x-4">
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            <button 
+              onClick={() => alert('Privacy Policy - Coming Soon')}
+              className="hover:text-white transition-colors"
+            >
+              Privacy Policy
+            </button>
+            <button 
+              onClick={() => alert('Terms of Service - Coming Soon')}
+              className="hover:text-white transition-colors"
+            >
+              Terms of Service
+            </button>
           </div>
         </div>
       </div>
@@ -78,29 +100,27 @@ interface SocialLinkProps {
 }
 
 const SocialLink: React.FC<SocialLinkProps> = ({ href, Icon }) => (
-  <a 
-    href={href} 
-    target="_blank" 
-    rel="noopener noreferrer"
+  <button
+    onClick={() => window.open(href, '_blank')}
     className="h-10 w-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-secondary hover:text-white transition-all duration-300"
   >
     <Icon className="h-5 w-5" />
-  </a>
+  </button>
 );
 
-interface FooterLinkProps {
-  to: string;
+interface FooterButtonProps {
+  onClick: () => void;
   children: React.ReactNode;
 }
 
-const FooterLink: React.FC<FooterLinkProps> = ({ to, children }) => (
+const FooterButton: React.FC<FooterButtonProps> = ({ onClick, children }) => (
   <li>
-    <Link 
-      to={to} 
+    <button
+      onClick={onClick}
       className="text-gray-400 hover:text-secondary transition-colors duration-300"
     >
       {children}
-    </Link>
+    </button>
   </li>
 );
 

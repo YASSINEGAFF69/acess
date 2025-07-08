@@ -58,12 +58,17 @@ const Hero: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
         >
-          <Link 
-            to="/#packages" 
+          <button
+            onClick={() => {
+              const element = document.getElementById('packages');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
             className="button-primary text-lg px-8 py-4"
           >
             Explore the world with us
-          </Link>
+          </button>
         </motion.div>
       </div>
 

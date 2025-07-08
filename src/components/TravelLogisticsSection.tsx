@@ -74,6 +74,35 @@ const TravelLogisticsSection: React.FC = () => {
             className="rounded-xl w-full h-64 object-cover"
           />
         </div>
+        
+        {/* Call to Action */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => {
+                const element = document.getElementById('packages');
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+              className="button-primary"
+            >
+              Book Your Journey
+            </button>
+            <button
+              onClick={() => window.open('mailto:aces.sarl.contact@gmail.com')}
+              className="button-secondary"
+            >
+              Ask About Transport
+            </button>
+          </div>
+        </motion.div>
       </div>
     </section>
   );

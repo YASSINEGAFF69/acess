@@ -355,12 +355,44 @@ const PaymentSuccess: React.FC = () => {
               </p>
               
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <button className="button-secondary flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => {
+                    // Generate and download a simple receipt
+                    const receiptContent = `
+ACES Tunisia - Booking Receipt
+==============================
+
+Booking Reference: ${booking.booking_reference}
+Package: ${booking.package_title}
+Total Amount: $${finalPrice.toFixed(2)} USD
+Payment Status: Paid
+Date: ${bookingDate}
+
+Thank you for choosing ACES Tunisia!
+                    `;
+                    
+                    const blob = new Blob([receiptContent], { type: 'text/plain' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `ACES-Receipt-${booking.booking_reference}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                  }}
+                  className="button-secondary flex items-center justify-center gap-2"
+                >
                   <Download className="h-5 w-5" />
                   Download Receipt
                 </button>
                 
-                <button className="button-secondary flex items-center justify-center gap-2">
+                <button 
+                  onClick={() => {
+                    window.open(`mailto:${booking.contact_email}?subject=ACES Tunisia Booking Confirmation - ${booking.booking_reference}&body=Your booking confirmation has been resent. Reference: ${booking.booking_reference}`);
+                  }}
+                  className="button-secondary flex items-center justify-center gap-2"
+                >
                   <Mail className="h-5 w-5" />
                   Resend Email
                 </button>

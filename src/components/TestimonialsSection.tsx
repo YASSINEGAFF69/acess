@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { testimonials } from '../data/testimonials';
-import { Star } from 'lucide-react';
+import { Star, ExternalLink } from 'lucide-react';
 
 const TestimonialsSection: React.FC = () => {
   return (
@@ -34,6 +34,28 @@ const TestimonialsSection: React.FC = () => {
             />
           ))}
         </div>
+        
+        {/* Call to Action */}
+        <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
+          <button
+            onClick={() => {
+              const element = document.getElementById('packages');
+              if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="button-primary inline-flex items-center gap-2"
+          >
+            Book Your Adventure
+            <ExternalLink className="h-5 w-5" />
+          </button>
+        </motion.div>
       </div>
     </section>
   );

@@ -184,12 +184,12 @@ const PricingSection: React.FC = () => {
                 </div>
 
                 {/* CTA Button */}
-                <Link 
-                  to={`/package/${plan.id}`}
+                <button
+                  onClick={() => window.location.href = `/package/${plan.id}`}
                   className="w-full button-primary text-center block"
                 >
                   Book {plan.name}
-                </Link>
+                </button>
               </div>
             </motion.div>
           ))}
