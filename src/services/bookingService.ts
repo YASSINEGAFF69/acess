@@ -110,6 +110,7 @@ class BookingService {
         .not('payment_order', 'is', null);
 
       if (error) {
+        console.error('Discount availability error:', error);
         throw new Error(`Failed to check discount availability: ${error.message}`);
       }
 
