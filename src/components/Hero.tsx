@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { desertAdventure } from '../assets/images';
 
 const Hero: React.FC = () => {
   const [scrollY, setScrollY] = useState(0);
@@ -21,7 +22,7 @@ const Hero: React.FC = () => {
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url('https://images.pexels.com/photos/12865187/pexels-photo-12865187.jpeg?auto=compress&cs=tinysrgb&w=1600')",
+          backgroundImage: `url(${desertAdventure})`,
           transform: `translateY(${scrollY * 0.5}px)`,
         }}
       >

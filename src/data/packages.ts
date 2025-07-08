@@ -1,11 +1,13 @@
+import { desertAdventure, adventureScene, desertExperience, starWarsScene } from '../assets/images';
+
 export const packages = [
   {
     id: 1,
     title: "Southern Tunisia Adventure - Platinum Pack",
     description: "Experience the ultimate desert adventure with authentic Berber tent accommodation at îlot Palmier Tozeur. This 4-day journey combines luxury with traditional desert living.",
     fullDescription: "Embark on an unforgettable 4-day journey through the breathtaking landscapes of Southern Tunisia with our Platinum Pack. Stay in authentic Berber tents at the exclusive îlot Palmier Tozeur, offering a unique blend of traditional desert living and modern comfort. Experience the magic of the Sahara Desert, visit the famous Chott el Djerid salt lake, explore ancient oases, and immerse yourself in the rich cultural heritage of the region.",
-    image: "https://images.pexels.com/photos/12865187/pexels-photo-12865187.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    imageLarge: "https://images.pexels.com/photos/1237119/pexels-photo-1237119.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: desertAdventure,
+    imageLarge: adventureScene,
     price: 1084, // Base price for single occupancy after discount
     originalPrice: 1275, // Original price before discount
     duration: "4 Days / 3 Nights",
@@ -59,12 +61,12 @@ export const packages = [
       }
     ],
     gallery: [
-      "https://images.pexels.com/photos/8550588/pexels-photo-8550588.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://images.pexels.com/photos/11121500/pexels-photo-11121500.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://images.pexels.com/photos/10563371/pexels-photo-10563371.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://images.pexels.com/photos/8550574/pexels-photo-8550574.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://images.pexels.com/photos/1703314/pexels-photo-1703314.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-      "https://images.pexels.com/photos/1001435/pexels-photo-1001435.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      desertAdventure,
+      adventureScene,
+      desertExperience,
+      starWarsScene,
+      desertAdventure,
+      adventureScene
     ],
     itinerary: [
       {
@@ -121,7 +123,7 @@ export const packages = [
     id: 2,
     title: "Desert Discovery Tour - Diamond Pack",
     description: "Enjoy luxury accommodation at the 5-star Palm Beach Tozeur hotel while exploring Tunisia's desert landscapes and cultural heritage.",
-    image: "https://images.pexels.com/photos/1051073/pexels-photo-1051073.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: desertExperience,
     price: 977, // Base price for single occupancy after discount
     originalPrice: 1150, // Original price before discount
     duration: "4 Days / 3 Nights",
@@ -172,7 +174,7 @@ export const packages = [
     id: 3,
     title: "Cultural Experience Package - VIP Pack",
     description: "Ultimate luxury experience at Anantara Sahara Tozeur Resort & Villas with Deluxe Garden view Suite accommodation.",
-    image: "https://images.pexels.com/photos/3243090/pexels-photo-3243090.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    image: adventureScene,
     price: 1939, // Base price for single occupancy after discount
     originalPrice: 2284, // Original price before discount
     duration: "4 Days / 3 Nights",

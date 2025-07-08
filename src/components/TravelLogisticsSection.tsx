@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Bus, Beef as Jeep } from 'lucide-react';
+import { luxuryCoach, desertVehicles } from '../assets/images';
 
 const TravelLogisticsSection: React.FC = () => {
   return (
@@ -59,7 +60,7 @@ const TravelLogisticsSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            src="https://images.pexels.com/photos/1751503/pexels-photo-1751503.jpeg"
+            src={desertVehicles}
             alt="Desert 4x4 vehicles"
             className="rounded-xl w-full h-64 object-cover"
           />
@@ -68,7 +69,7 @@ const TravelLogisticsSection: React.FC = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            src="https://images.pexels.com/photos/2533092/pexels-photo-2533092.jpeg"
+            src={luxuryCoach}
             alt="Luxury coach"
             className="rounded-xl w-full h-64 object-cover"
           />

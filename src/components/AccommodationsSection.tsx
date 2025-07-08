@@ -1,21 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { berberTents, palmBeachPalace, anantaraSahara } from '../assets/images';
 
 const accommodations = [
   {
     name: "L'ÎLOT PALMIER TOZEUR: BERBER TENTS",
     description: "A unique experience of lodging in the tents of the Berbers.",
-    image: "https://images.pexels.com/photos/7061662/pexels-photo-7061662.jpeg"
+    image: berberTents
   },
   {
     name: "PALM BEACH PALACE TOZEUR",
     description: "Set in an oasis of greenery and tranquility, overlooking the splendid Tozeur palm grove.",
-    image: "https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg"
+    image: palmBeachPalace
   },
   {
     name: "ANANTARA SAHARA TOZEUR RESORT & VILLAS",
     description: "Your luxurious gateway to the majesty of the Sahara.",
-    image: "https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg"
+    image: anantaraSahara
   }
 ];
 

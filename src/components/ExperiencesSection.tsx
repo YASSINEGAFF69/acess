@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { experiences } from '../data/experiences';
 import { Star, Music, Utensils, Camera } from 'lucide-react';
+import { stargazing, desertParty, loungeTerrasse } from '../assets/images';
 
 const ExperiencesSection: React.FC = () => {
   const icons = [Star, Music, Utensils, Camera];
@@ -56,7 +57,7 @@ const ExperiencesSection: React.FC = () => {
               transition={{ duration: 0.6 }}
             >
               <img 
-                src="https://images.pexels.com/photos/3278939/pexels-photo-3278939.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                src={stargazing} 
                 alt="Stargazing in the desert"
                 className="w-full h-full object-cover rounded-xl"
               />
@@ -70,7 +71,7 @@ const ExperiencesSection: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <img 
-                src="https://images.pexels.com/photos/2526128/pexels-photo-2526128.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                src={loungeTerrasse} 
                 alt="Oasis experience"
                 className="w-full h-full object-cover rounded-xl"
               />
@@ -84,7 +85,7 @@ const ExperiencesSection: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
             >
               <img 
-                src="https://images.pexels.com/photos/2272854/pexels-photo-2272854.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
+                src={desertParty} 
                 alt="Desert party"
                 className="w-full h-full object-cover rounded-xl"
               />

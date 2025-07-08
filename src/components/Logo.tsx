@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from "..//assets/images/logo1.png"; // Adjust path based on your project structure
+import { logo } from '../assets/images';
 
 
 interface LogoProps {

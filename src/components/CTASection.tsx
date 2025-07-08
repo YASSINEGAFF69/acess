@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { starWarsScene } from '../assets/images';
 
 const CTASection: React.FC = () => {
   return (
@@ -8,7 +9,7 @@ const CTASection: React.FC = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20"
         style={{ 
-          backgroundImage: "url('https://images.pexels.com/photos/1718337/pexels-photo-1718337.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')"
+          backgroundImage: `url(${starWarsScene})`
         }}
       ></div>
       
