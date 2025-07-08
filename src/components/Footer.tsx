@@ -108,6 +108,22 @@ const SocialLink: React.FC<SocialLinkProps> = ({ href, Icon }) => (
   </button>
 );
 
+interface FooterLinkProps {
+  to: string;
+  children: React.ReactNode;
+}
+
+const FooterLink: React.FC<FooterLinkProps> = ({ to, children }) => (
+  <li>
+    <Link
+      to={to}
+      className="text-gray-400 hover:text-secondary transition-colors duration-300"
+    >
+      {children}
+    </Link>
+  </li>
+);
+
 interface FooterButtonProps {
   onClick: () => void;
   children: React.ReactNode;
