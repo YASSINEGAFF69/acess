@@ -222,7 +222,6 @@ export const packages = [
         price: 250
       }
     ]
-  }
   },
   {
     id: 4,
@@ -324,4 +323,5 @@ export const packages = [
         ]
       }
     ]
+  }
 ];

@@ -73,7 +73,6 @@ const pricingPlans = [
     ],
     note: "The accommodation of the VIP pack is at Anantara Sahara Tozeur Resort & Villas",
     color: "bg-gradient-to-br from-yellow-400 to-yellow-600"
-  }
   },
   {
     id: 4,
@@ -98,6 +97,7 @@ const pricingPlans = [
     ],
     note: "The Tunis City Tour offers three options: Group tour, Private tour, or Bicycle tour for an eco-friendly experience",
     color: "bg-gradient-to-br from-green-400 to-green-600"
+  }
 ];
 
 const PricingSection: React.FC = () => {
