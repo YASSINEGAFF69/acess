@@ -67,7 +67,8 @@ class BookingService {
       const packageCapacities = {
         1: 100, // Platinum Pack
         2: 300, // Diamond Pack
-        3: 30   // VIP Pack
+        3: 30,  // VIP Pack
+        4: 200  // Tunis City Tour
       };
 
       const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 0;

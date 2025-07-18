@@ -131,6 +131,7 @@ const PackageDetail: React.FC = () => {
       case 1: return { name: "PLATINUM PACK", color: "bg-gray-600", description: "Berber tent experience" };
       case 2: return { name: "DIAMOND PACK", color: "bg-blue-600", description: "5-star hotel luxury" };
       case 3: return { name: "VIP PACK", color: "bg-yellow-600", description: "Ultimate resort experience" };
+      case 4: return { name: "CITY TOUR", color: "bg-green-600", description: "Cultural immersion experience" };
       default: return { name: "PACKAGE", color: "bg-gray-600", description: "Travel package" };
     }
   };

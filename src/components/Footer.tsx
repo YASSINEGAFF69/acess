@@ -27,6 +27,7 @@ const Footer: React.FC = () => {
               <FooterLink to="/package/1">Southern Tunisia Adventure</FooterLink>
               <FooterLink to="/package/2">Desert Discovery Tour</FooterLink>
               <FooterLink to="/package/3">Cultural Experience</FooterLink>
+              <FooterLink to="/package/4">Tunis City Tour</FooterLink>
             </ul>
           </div>
           

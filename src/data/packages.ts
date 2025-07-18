@@ -223,4 +223,105 @@ export const packages = [
       }
     ]
   }
+  },
+  {
+    id: 4,
+    title: "Exciting Journey to Tunis - City Tour",
+    description: "One-day trip to the Medina of Tunis and the Bardo Museum. An immersion in Tunisian tradition and a glimpse of the history of Tunis. A dive into the Tunisian lifestyle and the culinary habits.",
+    fullDescription: "Discover the heart of Tunisia's capital with our comprehensive Tunis City Tour. This one-day cultural immersion takes you through the historic Medina of Tunis, a UNESCO World Heritage site, and the renowned Bardo Museum, home to one of the world's finest collections of Roman mosaics. Experience authentic Tunisian culture, traditional architecture, and local culinary delights in this unforgettable journey through Tunisia's rich history.",
+    image: "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+    imageLarge: "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+    price: 91, // Base price for group tour
+    originalPrice: 107, // Original price before discount
+    duration: "1 Day",
+    departureTime: "09:00 AM from hotel",
+    location: "Tunis, Tunisia",
+    groupSize: "Flexible group sizes",
+    accommodation: "Day tour - no accommodation included",
+    capacity: 200,
+    pricingTiers: {
+      group: { original: 107, discounted: 91 },
+      private: { original: 222, discounted: 189 },
+      bicycle: { original: 151, discounted: 128 }
+    },
+    included: [
+      "Hotel pickup and drop-off",
+      "Lunch at traditional restaurant",
+      "Bottled water throughout the tour",
+      "Private transportation in air-conditioned vehicle",
+      "Entry to the Medina of Tunis",
+      "Entry to the International Museum of Bardo",
+      "Professional English-speaking tour guide",
+      "All mentioned activities and visits"
+    ],
+    options: [
+      {
+        id: 401,
+        title: "Private Tour Upgrade",
+        description: "Upgrade to a private tour with dedicated guide and vehicle for your group only.",
+        price: 98
+      },
+      {
+        id: 402,
+        title: "Bicycle Tour Experience",
+        description: "Explore Tunis by bicycle for an eco-friendly and active tour experience.",
+        price: 37
+      },
+      {
+        id: 403,
+        title: "Traditional Cooking Class",
+        description: "Learn to prepare traditional Tunisian dishes with a local chef.",
+        price: 45
+      },
+      {
+        id: 404,
+        title: "Extended Museum Tour",
+        description: "Extended guided tour of the Bardo Museum with expert art historian.",
+        price: 25
+      }
+    ],
+    gallery: [
+      "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+      "https://images.pexels.com/photos/4353618/pexels-photo-4353618.jpeg",
+      "https://images.pexels.com/photos/5490779/pexels-photo-5490779.jpeg",
+      "https://images.pexels.com/photos/3889928/pexels-photo-3889928.jpeg",
+      "https://images.pexels.com/photos/5490777/pexels-photo-5490777.jpeg",
+      "https://images.pexels.com/photos/4353617/pexels-photo-4353617.jpeg"
+    ],
+    itinerary: [
+      {
+        title: "Morning Departure and Medina Exploration",
+        description: "Begin your cultural journey with hotel pickup and explore the historic Medina of Tunis, a UNESCO World Heritage site.",
+        activities: [
+          "Hotel pickup at 09:00 AM",
+          "Half-hour tour in Tunis Downtown",
+          "Visit Bab Bhar ('The gate of the sea' of the Medina) - 15 minutes",
+          "Explore the Medina and its historic sights",
+          "Discover traditional crafts and local markets",
+          "Learn about Tunisian architecture and culture"
+        ]
+      },
+      {
+        title: "Lunch and Museum Visit",
+        description: "Enjoy traditional Tunisian cuisine followed by a comprehensive visit to the world-renowned Bardo Museum.",
+        activities: [
+          "Lunch at Fondouk El Attarine (12:00 PM - 2:00 PM)",
+          "Taste authentic Tunisian dishes and local specialties",
+          "Visit to the International Museum of Bardo",
+          "Explore the world's finest collection of Roman mosaics",
+          "Discover Tunisia's rich archaeological heritage",
+          "Guided tour with expert commentary"
+        ]
+      },
+      {
+        title: "Return Journey",
+        description: "Complete your cultural immersion and return to your hotel with unforgettable memories of Tunis.",
+        activities: [
+          "Final exploration of any remaining sites",
+          "Shopping opportunity for souvenirs",
+          "Drop-off at the hotel at 06:00 PM",
+          "Optional: Bicycle tour available for eco-friendly exploration"
+        ]
+      }
+    ]
 ];

@@ -74,6 +74,30 @@ const pricingPlans = [
     note: "The accommodation of the VIP pack is at Anantara Sahara Tozeur Resort & Villas",
     color: "bg-gradient-to-br from-yellow-400 to-yellow-600"
   }
+  },
+  {
+    id: 4,
+    name: "TUNIS CITY TOUR",
+    description: "One-day cultural immersion",
+    subtitle: "Medina of Tunis & Bardo Museum",
+    badge: "Cultural Experience",
+    pricingTiers: {
+      group: { original: 107, discounted: 91 },
+      private: { original: 222, discounted: 189 },
+      bicycle: { original: 151, discounted: 128 }
+    },
+    features: [
+      "HOTEL PICKUP & DROP-OFF",
+      "TRADITIONAL LUNCH",
+      "BOTTLED WATER",
+      "PRIVATE TRANSPORTATION",
+      "MEDINA ENTRY",
+      "BARDO MUSEUM ENTRY",
+      "ENGLISH-SPEAKING GUIDE",
+      "ALL ACTIVITIES"
+    ],
+    note: "The Tunis City Tour offers three options: Group tour, Private tour, or Bicycle tour for an eco-friendly experience",
+    color: "bg-gradient-to-br from-green-400 to-green-600"
 ];
 
 const PricingSection: React.FC = () => {
