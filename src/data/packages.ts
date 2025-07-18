@@ -323,7 +323,6 @@ export const packages = [
         ]
       }
     ]
-  }
   },
   {
     id: 5,
@@ -429,4 +428,5 @@ export const packages = [
         ]
       }
     ]
+  }
 ];
