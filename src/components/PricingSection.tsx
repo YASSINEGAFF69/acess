@@ -97,6 +97,30 @@ const pricingPlans = [
     ],
     note: "The Tunis City Tour offers three options: Group tour, Private tour, or Bicycle tour for an eco-friendly experience",
     color: "bg-gradient-to-br from-green-400 to-green-600"
+  },
+  {
+    id: 5,
+    name: "CARTHAGE & SIDI BOU SAID",
+    description: "One-day coastal heritage tour",
+    subtitle: "Ancient Carthage & Blue Village",
+    badge: "Historical Journey",
+    pricingTiers: {
+      group: { original: 128, discounted: 109 },
+      private: { original: 234, discounted: 199 },
+      bicycle: { original: 173, discounted: 147 }
+    },
+    features: [
+      "HOTEL PICKUP & DROP-OFF",
+      "LUNCH AT SIDI BOU SAID",
+      "BOTTLED WATER",
+      "PRIVATE TRANSPORTATION",
+      "CARTHAGE RUINS ENTRY",
+      "SIDI BOU SAID ENTRY",
+      "ENGLISH-SPEAKING GUIDE",
+      "ALL HISTORICAL SITES"
+    ],
+    note: "The Carthage & Sidi Bou Said tour offers three options: Group tour, Private tour (max 9 people), or Bicycle tour for an eco-friendly coastal experience",
+    color: "bg-gradient-to-br from-cyan-400 to-blue-600"
   }
 ];
 

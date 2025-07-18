@@ -324,4 +324,109 @@ export const packages = [
       }
     ]
   }
+  },
+  {
+    id: 5,
+    title: "Exciting Journey to Tunis - Carthage & Sidi Bou Said",
+    description: "One-day trip to Carthage and Sidi Bou Said, a hub of Tunis. An immersion in the history of Carthage and a brief glimpse of 3,000 years. Sunset break at the highest viewpoint, Sidi Bou Said.",
+    fullDescription: "Discover the ancient wonders of Carthage and the picturesque beauty of Sidi Bou Said on this captivating one-day journey. Explore the ruins of the legendary Carthage civilization, visit the historic Byrsa Hill and Carthage Museum, and experience the ancient Punic Ports. Then journey to the stunning clifftop village of Sidi Bou Said with its iconic blue and white architecture, enjoy lunch with panoramic views, and witness a breathtaking sunset from the highest viewpoint.",
+    image: "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+    imageLarge: "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+    price: 109, // Base price for group tour after discount
+    originalPrice: 128, // Original price before discount
+    duration: "1 Day",
+    departureTime: "09:00 AM from hotel",
+    location: "Carthage & Sidi Bou Said, Tunisia",
+    groupSize: "Flexible group sizes",
+    accommodation: "Day tour - no accommodation included",
+    capacity: 150,
+    pricingTiers: {
+      group: { original: 128, discounted: 109 },
+      private: { original: 234, discounted: 199 },
+      bicycle: { original: 173, discounted: 147 }
+    },
+    included: [
+      "Hotel pickup and drop-off",
+      "Lunch at Sidi Bou Said",
+      "Bottled water throughout the tour",
+      "Private transportation in air-conditioned vehicle",
+      "Entry to the Ruins of Carthage",
+      "Entry to Sidi Bou Said",
+      "Professional English-speaking tour guide",
+      "Visit to Byrsa Hill & Carthage Museum",
+      "Visit to Punic Ports (Ancient Harbor of Carthage)",
+      "Visit to Antonine Baths (Thermes d'Antonin)"
+    ],
+    options: [
+      {
+        id: 501,
+        title: "Private Tour Upgrade",
+        description: "Upgrade to a private tour with dedicated guide and vehicle for your group only (max 9 people).",
+        price: 90
+      },
+      {
+        id: 502,
+        title: "Bicycle Tour Experience",
+        description: "Explore Carthage and Sidi Bou Said by bicycle for an eco-friendly and active tour experience.",
+        price: 38
+      },
+      {
+        id: 503,
+        title: "Sunset Photography Session",
+        description: "Professional photography session during the golden hour at Sidi Bou Said's highest viewpoint.",
+        price: 65
+      },
+      {
+        id: 504,
+        title: "Traditional Craft Workshop",
+        description: "Learn traditional Tunisian crafts in Sidi Bou Said's artisan quarter.",
+        price: 45
+      }
+    ],
+    gallery: [
+      "https://images.pexels.com/photos/5490778/pexels-photo-5490778.jpeg",
+      "https://images.pexels.com/photos/4353618/pexels-photo-4353618.jpeg",
+      "https://images.pexels.com/photos/5490779/pexels-photo-5490779.jpeg",
+      "https://images.pexels.com/photos/3889928/pexels-photo-3889928.jpeg",
+      "https://images.pexels.com/photos/5490777/pexels-photo-5490777.jpeg",
+      "https://images.pexels.com/photos/4353617/pexels-photo-4353617.jpeg"
+    ],
+    itinerary: [
+      {
+        title: "Morning Departure and Carthage Exploration",
+        description: "Begin your historical journey with hotel pickup and explore the ancient ruins of Carthage, including the famous Byrsa Hill and Carthage Museum.",
+        activities: [
+          "Hotel pickup at 09:00 AM",
+          "Visit to Byrsa Hill & Carthage Museum (90 minutes)",
+          "Explore the archaeological site and learn about Carthaginian history",
+          "Visit to Punic Ports - Ancient Harbor of Carthage (30 minutes)",
+          "Discover the ancient naval and commercial harbors",
+          "Visit to Antonine Baths (Thermes d'Antonin) - 45 minutes",
+          "Explore the impressive Roman bath complex ruins"
+        ]
+      },
+      {
+        title: "Sidi Bou Said Experience",
+        description: "Journey to the picturesque clifftop village of Sidi Bou Said, famous for its blue and white architecture and stunning Mediterranean views.",
+        activities: [
+          "Travel to Sidi Bou Said",
+          "Lunch at a traditional restaurant (1:00 PM - 3:00 PM)",
+          "Enjoy panoramic views of the Mediterranean",
+          "Walk tour in Sidi Bou Said village",
+          "Explore the iconic blue and white streets",
+          "Coffee time at a traditional café",
+          "Sunset viewing from the highest viewpoint"
+        ]
+      },
+      {
+        title: "Return Journey",
+        description: "Complete your cultural and historical immersion and return to your hotel with unforgettable memories.",
+        activities: [
+          "Final exploration and photo opportunities",
+          "Shopping time for local crafts and souvenirs",
+          "Drop-off at the hotel",
+          "Optional: Bicycle tour available for eco-friendly exploration"
+        ]
+      }
+    ]
 ];

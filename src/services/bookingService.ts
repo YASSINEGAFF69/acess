@@ -68,7 +68,8 @@ class BookingService {
         1: 100, // Platinum Pack
         2: 300, // Diamond Pack
         3: 30,  // VIP Pack
-        4: 200  // Tunis City Tour
+        4: 200, // Tunis City Tour
+        5: 150  // Carthage & Sidi Bou Said Tour
       };
 
       const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 0;
@@ -346,7 +347,7 @@ class BookingService {
   // Get package statistics - ONLY COUNT PAID BOOKINGS
   async getPackageStatistics(): Promise<PackageCapacityInfo[]> {
     try {
-      const packageIds = [1, 2, 3];
+      const packageIds = [1, 2, 3, 4, 5];
       const statistics = await Promise.all(
         packageIds.map(id => this.checkPackageCapacity(id))
       );
