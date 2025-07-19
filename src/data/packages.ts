@@ -117,4 +117,88 @@ export const packages = [
     note: "The Carthage & Sidi Bou Said tour offers three options: Group tour, Private tour (max 9 people), or Bicycle tour for an eco-friendly coastal experience",
     color: "bg-gradient-to-br from-cyan-400 to-blue-600"
   }
+  },
+  {
+    id: 6,
+    title: "Sajnene Pottery Master Class",
+    description: "Traditional pottery workshop in northwestern Tunisia where women perpetuate a unique craft tradition of modelled pottery, handed down from generation to generation.",
+    image: "https://images.pexels.com/photos/1094767/pexels-photo-1094767.jpeg?auto=compress&cs=tinysrgb&w=800",
+    imageLarge: "https://images.pexels.com/photos/1094767/pexels-photo-1094767.jpeg?auto=compress&cs=tinysrgb&w=1200",
+    price: 101,
+    originalPrice: 119,
+    duration: "1 Day",
+    location: "Sajnene, Tunisia",
+    groupSize: "Up to 15 people",
+    departureTime: "08:00 AM",
+    accommodation: "Day trip with traditional lunch included",
+    fullDescription: "The Sajnene pottery workshop, located in northwestern Tunisia, is a place where women perpetuate a unique craft tradition of modelled pottery, handed down from generation to generation. Renowned for their organic shapes and Berber decorations, these potteries offer a testament to the region's history and culture, and have been designated as intangible heritage by UNESCO.",
+    included: [
+      "Hotel pickup and drop-off",
+      "Traditional lunch",
+      "Bottled water",
+      "Private transportation in air-conditioned vehicle",
+      "Pottery Master Class participation",
+      "Trekking to the Water Barrage of Sajnene",
+      "Tour guide (English-speaking)",
+      "All workshop materials"
+    ],
+    itinerary: [
+      {
+        title: "Morning Workshop & Cultural Immersion",
+        description: "Start your day with hotel pickup at 08:00 AM and journey to the traditional pottery village of Sajnene.",
+        activities: [
+          "08:00 AM - Hotel pickup",
+          "09:30 AM - Arrival at Sajnene pottery workshop",
+          "10:00 AM - Pottery Master Class begins",
+          "11:30 AM - Learn traditional Berber decoration techniques",
+          "12:30 PM - Traditional lunch break"
+        ]
+      },
+      {
+        title: "Afternoon Exploration & Nature",
+        description: "After lunch, explore the natural beauty of the region with a scenic trek.",
+        activities: [
+          "02:00 PM - Trekking to the Water Barrage of Sajnene",
+          "03:30 PM - Photography and nature appreciation",
+          "04:30 PM - Return journey begins",
+          "06:00 PM - Drop-off at hotel"
+        ]
+      }
+    ],
+    gallery: [
+      "https://images.pexels.com/photos/1094767/pexels-photo-1094767.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/1094766/pexels-photo-1094766.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/1094768/pexels-photo-1094768.jpeg?auto=compress&cs=tinysrgb&w=400",
+      "https://images.pexels.com/photos/1094769/pexels-photo-1094769.jpeg?auto=compress&cs=tinysrgb&w=400"
+    ],
+    options: [
+      {
+        id: 1,
+        title: "Private Workshop Experience",
+        description: "Exclusive pottery session with master artisan (max 9 people)",
+        price: 98
+      },
+      {
+        id: 2,
+        title: "Extended Cultural Tour",
+        description: "Additional visit to local Berber heritage sites",
+        price: 45
+      },
+      {
+        id: 3,
+        title: "Take Home Your Creation",
+        description: "Professional firing and shipping of your pottery piece",
+        price: 35
+      },
+      {
+        id: 4,
+        title: "Traditional Costume Experience",
+        description: "Dress in traditional Berber attire during the workshop",
+        price: 25
+      }
+    ],
+    pricingTiers: {
+      group: { original: 119, discounted: 101 },
+      private: { original: 234, discounted: 199 }
+    }
 ];

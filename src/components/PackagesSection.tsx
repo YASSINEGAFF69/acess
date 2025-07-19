@@ -85,6 +85,7 @@ const PackageCard: React.FC<PackageCardProps> = ({ package: pkg, index, capacity
       case 3: return { name: "VIP", color: "bg-yellow-600", icon: "🏰" };
       case 4: return { name: "CITY TOUR", color: "bg-green-600", icon: "🏛️" };
       case 5: return { name: "COASTAL TOUR", color: "bg-cyan-600", icon: "🏛️" };
+      case 6: return { name: "POTTERY WORKSHOP", color: "bg-amber-600", icon: "🏺" };
       default: return { name: "PACKAGE", color: "bg-gray-600", icon: "📦" };
     }
   };
