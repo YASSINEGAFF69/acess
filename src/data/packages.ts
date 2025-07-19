@@ -116,7 +116,6 @@ export const packages = [
     ],
     note: "The Carthage & Sidi Bou Said tour offers three options: Group tour, Private tour (max 9 people), or Bicycle tour for an eco-friendly coastal experience",
     color: "bg-gradient-to-br from-cyan-400 to-blue-600"
-  }
   },
   {
     id: 6,
@@ -201,4 +200,5 @@ export const packages = [
       group: { original: 119, discounted: 101 },
       private: { original: 234, discounted: 199 }
     }
+  }
 ];
