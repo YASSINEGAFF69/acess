@@ -348,7 +348,7 @@ class BookingService {
   // Get package statistics - ONLY COUNT PAID BOOKINGS
   async getPackageStatistics(): Promise<PackageCapacityInfo[]> {
     try {
-      const packageIds = [1, 2, 3, 4, 5];
+      const packageIds = [1, 2, 3, 4, 5, 6];
       const statistics = await Promise.all(
         packageIds.map(id => this.checkPackageCapacity(id))
       );
