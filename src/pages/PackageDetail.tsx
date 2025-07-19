@@ -239,18 +239,18 @@ const PackageDetail: React.FC = () => {
                 ))}
               </ul>
               
-              {packageData.itinerary && (
+              {packageData.itinerary && packageData.itinerary.length > 0 && (
                 <>
                   <h3 className="font-bold text-xl mb-4 text-gray-800">Itinerary</h3>
                   <div className="mb-8">
-                    {packageData.itinerary.map((day, index) => (
+                    {packageData.itinerary?.map((day, index) => (
                       <div key={index} className="mb-6">
                         <h4 className="font-bold text-lg text-primary mb-2">Day {index + 1}: {day.title}</h4>
                         <p className="text-gray-700 mb-4">{day.description}</p>
                         
-                        {day.activities && (
+                        {day.activities && day.activities.length > 0 && (
                           <ul className="ml-6 space-y-2">
-                            {day.activities.map((activity, idx) => (
+                            {day.activities?.map((activity, idx) => (
                               <li key={idx} className="flex items-center gap-2">
                                 <div className="h-2 w-2 rounded-full bg-secondary flex-shrink-0"></div>
                                 <span className="text-gray-600">{activity}</span>
