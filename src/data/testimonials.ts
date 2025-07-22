@@ -1,23 +1,27 @@
+import whatsapp1 from '../assets/images/whatsapp1.jpg';
+import whatsapp2 from '../assets/images/whatsapp2.jpg';
+import whatsapp3 from '../assets/images/whatsapp3.jpg';
+
 export const testimonials = [
   {
-    name: "Sarah Johnson",
-    location: "London, UK",
-    avatar: "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    name: "Sabri Ben Mefteh",
+    location: "Tunis, Tunisia",
+    avatar: whatsapp1,
     rating: 5,
-    content: "The Southern Tunisia Adventure was beyond expectations. The desert sunset, traditional music, and astronomical observation were highlights I'll never forget. The team was professional and friendly."
+    content: "Well-organized trip to Turkey (Antalya, Fethiye, Olüdeniz). The places are magnificent, paradisiacal. I highly recommend this agency if you want to experience an exceptional adventure away from traditional circuits."
   },
   {
-    name: "Marco Bianchi",
+    name: "Hanen Ben Tlili",
     location: "Milan, Italy",
-    avatar: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    avatar: whatsapp2,
     rating: 5,
-    content: "This was my second trip with ACES and they continue to impress. The Desert Discovery Tour was perfectly organized with incredible attention to detail. The night in the desert camp was magical."
+    content: "Bravo to the Aissaoui's for this great program! You are unique Aissaoui Company for Events and Services."
   },
   {
-    name: "Leila Ahmad",
+    name: "Amine Moullehi",
     location: "Dubai, UAE",
-    avatar: "https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+    avatar: whatsapp3,
     rating: 4,
-    content: "A wonderful cultural immersion in Tunisia's traditions. The workshops with local artisans were informative and enjoyable. Would highly recommend the Cultural Experience package."
+    content: "SUPER experience, SUPER, SUPER! It's a luxury trip. Thank you very much ACES for the invitation!"
   }
 ];
