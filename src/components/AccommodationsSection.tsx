@@ -45,9 +45,9 @@ const AccommodationsSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white rounded-xl overflow-hidden shadow-lg"
+              className="bg-white rounded-xl overflow-hidden shadow-lg flex flex-col h-full"
             >
-              <div className="aspect-w-16 aspect-h-9">
+              <div className="aspect-w-16 aspect-h-9 flex-1">
                 <img
                   src={accommodation.image}
                   alt={accommodation.name}

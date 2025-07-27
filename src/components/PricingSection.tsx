@@ -49,7 +49,7 @@ const PricingSection: React.FC = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className={`bg-white rounded-xl shadow-lg overflow-hidden relative ${
+              className={`bg-white rounded-xl shadow-lg overflow-hidden relative h-full flex flex-col ${
                 plan.id === 2 ? 'ring-4 ring-secondary ring-opacity-50 transform scale-105' : ''
               }`}
             >
@@ -70,7 +70,7 @@ const PricingSection: React.FC = () => {
               </div>
 
               {/* Pricing Tiers */}
-              <div className="p-6">
+              <div className="p-6 flex-1">
                 <div className="space-y-4 mb-6">
                   {Object.entries(plan.pricingTiers).map(([type, pricing]) => (
                     <div key={type} className="bg-desert-50 rounded-lg p-4">
@@ -111,14 +111,16 @@ const PricingSection: React.FC = () => {
                   </p>
                 </div>
 
-                {/* CTA Button */}
-                <button
-                  onClick={() => window.location.href = `/package/${plan.id}`}
-                  className="w-full button-primary text-center block"
-                >
-                  Book {plan.name}
-                </button>
               </div>
+                {/* CTA Button */}
+                <div className='p-6'>
+                  <button
+                    onClick={() => window.location.href = `/package/${plan.id}`}
+                    className="w-full button-primary text-center block"
+                  >
+                    Book {plan.name}
+                  </button>
+                </div>
             </motion.div>
           ))}
         </div>

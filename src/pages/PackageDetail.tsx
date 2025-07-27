@@ -38,7 +38,7 @@ const PackageDetail: React.FC = () => {
       
       // Get price for selected tier
       if (packageData.pricingTiers && packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers]) {
-        basePrice = packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers].discounted;
+        basePrice = packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers]?.discounted || packageData.price;
       }
       
       let total = basePrice;
@@ -103,7 +103,7 @@ const PackageDetail: React.FC = () => {
     // Get the base price for selected tier
     let basePrice = packageData.price;
     if (packageData.pricingTiers && packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers]) {
-      basePrice = packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers].discounted;
+      basePrice = packageData.pricingTiers[selectedTier as keyof typeof packageData.pricingTiers]?.discounted || packageData.price;
     }
 
     // Set booking data in context
