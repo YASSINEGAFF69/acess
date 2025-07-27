@@ -15,10 +15,13 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (window.location.hash) {
       const id = window.location.hash.substring(1);
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 0);
+      
     } else {
       window.scrollTo(0, 0);
     }

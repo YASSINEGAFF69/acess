@@ -26,7 +26,7 @@ const Hero: React.FC = () => {
           transform: `translateY(${scrollY * 0.5}px)`,
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 backdrop-blur-[2px]" />
       </div>
 
       {/* Hero content */}
