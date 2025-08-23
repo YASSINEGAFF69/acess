@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useBooking } from '../contexts/BookingContext';
 import { packages } from '../data/packages';
-import { bookingService } from '../services/bookingService';
+import { googleSheetsService } from '../services/googleSheetsService';
 
 interface PersonForm {
   firstName: string;
@@ -29,7 +29,7 @@ interface BookingFormData {
 
 const BookingForm: React.FC = () => {
   const navigate = useNavigate();
-  const { bookingData, setBookingPersonsData, setCurrentBookingReference } = useBooking();
+  const { bookingData, setBookingPersonsData, setCurrentBookingReference, setBookingSuccess } = useBooking();
   const [currentStep, setCurrentStep] = useState(1);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -80,7 +80,7 @@ const BookingForm: React.FC = () => {
     if (!bookingData) return;
 
     try {
-      const validation = await bookingService.validateBooking(bookingData.packageId, numberOfPeople);
+      const validation = await googleSheetsService.validateBooking(bookingData.packageId, numberOfPeople);
       if (!validation.valid) {
         setCapacityError(validation.error || 'Capacity limit exceeded');
       } else {
@@ -150,7 +150,7 @@ const BookingForm: React.FC = () => {
     setSubmitError(null);
 
     try {
-      // Create booking in Supabase
+      // Create booking in Google Sheets
       const bookingCreateData = {
         packageId: bookingData.packageId,
         packageTitle: bookingData.packageTitle,
@@ -165,7 +165,7 @@ const BookingForm: React.FC = () => {
         travelers: data.people.slice(0, data.numberOfPeople)
       };
 
-      const { booking, bookingReference } = await bookingService.createBooking(bookingCreateData);
+      const { bookingReference, success } = await googleSheetsService.createBooking(bookingCreateData);
 
       // Set booking persons data in context
       setBookingPersonsData({
@@ -178,8 +178,9 @@ const BookingForm: React.FC = () => {
       // Set current booking reference
       setCurrentBookingReference(bookingReference);
 
-      // Navigate to payment page
-      navigate('/checkout');
+      // Set booking success and navigate to success page
+      setBookingSuccess(success);
+      navigate('/success');
     } catch (error) {
       console.error('Error creating booking:', error);
       setSubmitError(error instanceof Error ? error.message : 'Failed to create booking. Please try again.');
@@ -684,11 +685,11 @@ const BookingForm: React.FC = () => {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="h-5 w-5 animate-spin" />
-                          Creating Booking...
+                          Submitting Booking...
                         </>
                       ) : (
                         <>
-                          Proceed to Payment
+                          Submit Booking
                           <ChevronRight className="h-5 w-5" />
                         </>
                       )}

@@ -40,9 +40,11 @@ interface BookingContextType {
   bookingData: BookingData | null;
   bookingPersonsData: BookingPersonsData | null;
   currentBookingReference: string | null;
+  bookingSuccess: boolean;
   setBookingData: (data: BookingData) => void;
   setBookingPersonsData: (data: BookingPersonsData) => void;
   setCurrentBookingReference: (reference: string | null) => void;
+  setBookingSuccess: (success: boolean) => void;
   resetBookingData: () => void;
 }
 
@@ -52,11 +54,13 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [bookingPersonsData, setBookingPersonsData] = useState<BookingPersonsData | null>(null);
   const [currentBookingReference, setCurrentBookingReference] = useState<string | null>(null);
+  const [bookingSuccess, setBookingSuccess] = useState<boolean>(false);
   
   const resetBookingData = () => {
     setBookingData(null);
     setBookingPersonsData(null);
     setCurrentBookingReference(null);
+    setBookingSuccess(false);
   };
   
   return (
@@ -64,9 +68,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       bookingData, 
       bookingPersonsData,
       currentBookingReference,
+      bookingSuccess,
       setBookingData,
       setBookingPersonsData,
       setCurrentBookingReference,
+      setBookingSuccess,
       resetBookingData
     }}>
       {children}

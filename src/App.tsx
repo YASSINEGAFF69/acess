@@ -5,7 +5,6 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import PackageDetail from './pages/PackageDetail';
 import BookingForm from './pages/BookingForm';
-import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
 import { BookingProvider } from './contexts/BookingContext';
 
@@ -19,7 +18,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/package/:id" element={<PackageDetail />} />
             <Route path="/booking" element={<BookingForm />} />
-            <Route path="/checkout" element={<Checkout />} />
             <Route path="/success" element={<PaymentSuccess />} />
           </Routes>
         </main>

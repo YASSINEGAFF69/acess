@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { packages } from '../data/packages';
 import { Calendar, Compass, Users, Clock, Star, Percent, AlertTriangle, Loader2 } from 'lucide-react';
-import { bookingService, type PackageCapacityInfo } from '../services/bookingService';
+import { googleSheetsService, type PackageCapacityInfo } from '../services/googleSheetsService';
 
 const PackagesSection: React.FC = () => {
   const [capacityInfo, setCapacityInfo] = useState<PackageCapacityInfo[]>([]);
@@ -16,7 +16,7 @@ const PackagesSection: React.FC = () => {
   const loadCapacityInfo = async () => {
     try {
       setIsLoading(true);
-      const info = await bookingService.getPackageStatistics();
+      const info = await googleSheetsService.getPackageStatistics();
       setCapacityInfo(info);
     } catch (error) {
       console.error('Error loading capacity info:', error);
