@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import type { BookingInsert, BookingTravelerInsert, BookingRow } from '../lib/supabase';
 
 export interface CreateBookingData {
@@ -63,6 +63,26 @@ class BookingService {
   // Check package capacity - ONLY COUNT PAID BOOKINGS
   async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
     try {
+      // If Supabase is not configured, return mock data
+      if (!isSupabaseConfigured || !supabase) {
+        const mockCapacities = {
+          1: { available: 45, total: 50 },
+          2: { available: 38, total: 50 },
+          3: { available: 42, total: 50 },
+          4: { available: 35, total: 40 },
+          5: { available: 28, total: 30 },
+          6: { available: 47, total: 50 }
+        };
+        const mockData = mockCapacities[packageId as keyof typeof mockCapacities] || { available: 40, total: 50 };
+        return {
+          packageId,
+          totalBooked: mockData.total - mockData.available,
+          capacity: mockData.total,
+          available: mockData.available,
+          isFull: mockData.available === 0
+        };
+      }
+
       // Get package capacity from packages data
       const packageCapacities = {
         1: 100, // Platinum Pack
@@ -163,6 +183,35 @@ class BookingService {
   // Create a new booking with all related data
   async createBooking(data: CreateBookingData): Promise<{ booking: BookingRow; bookingReference: string }> {
     try {
+      // If Supabase is not configured, return mock booking reference
+      if (!isSupabaseConfigured || !supabase) {
+        console.warn('Supabase not configured. Returning mock booking reference.');
+        const mockBookingReference = `MOCK-${Date.now()}`;
+        const mockBooking = {
+          id: `mock-${Date.now()}`,
+          booking_reference: mockBookingReference,
+          package_id: data.packageId,
+          package_title: data.packageTitle,
+          base_price: data.basePrice,
+          total_price: data.totalPrice,
+          original_price: null,
+          discount_applied: false,
+          discount_amount: 0,
+          selected_options: data.selectedOptions,
+          number_of_people: data.numberOfPeople,
+          payment_status: 'pending' as const,
+          contact_email: data.contactEmail,
+          contact_phone: data.contactPhone,
+          contact_address: data.contactAddress,
+          special_requests: data.specialRequests || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          payment_reference: null,
+          payment_order: null
+        };
+        return { booking: mockBooking, bookingReference: mockBookingReference };
+      }
+
       // Note: We don't validate capacity here for pending bookings since we only count paid ones
       // This allows multiple people to book simultaneously without blocking each other
       
@@ -355,6 +404,42 @@ class BookingService {
       return statistics;
     } catch (error) {
       console.error('Error fetching package statistics:', error);
+      throw error;
+    }
+  }
+
+  // Get booking stats
+  async getBookingStats(): Promise<{ totalBookings: number; totalRevenue: number; averageBookingValue: number }> {
+    try {
+      // If Supabase is not configured, return mock stats
+      if (!isSupabaseConfigured || !supabase) {
+        return {
+          totalBookings: 1247,
+          totalRevenue: 89650,
+          averageBookingValue: 285
+        };
+      }
+
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('total_price')
+        .eq('payment_status', 'paid');
+
+      if (error) {
+        throw new Error(`Failed to fetch booking stats: ${error.message}`);
+      }
+
+      const totalBookings = data?.length || 0;
+      const totalRevenue = data?.reduce((sum, booking) => sum + booking.total_price, 0) || 0;
+      const averageBookingValue = totalBookings > 0 ? Math.round(totalRevenue / totalBookings) : 0;
+
+      return {
+        totalBookings,
+        totalRevenue,
+        averageBookingValue
+      };
+    } catch (error) {
+      console.error('Error fetching booking stats:', error);
       throw error;
     }
   }
