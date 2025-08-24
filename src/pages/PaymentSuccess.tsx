@@ -23,6 +23,8 @@ const PaymentSuccess: React.FC = () => {
   // Redirect if no booking data
   if (!bookingData || !bookingPersonsData || !currentBookingReference) {
     return (
+      <div className="pt-32 pb-20 bg-desert-50 min-h-screen">
+        <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
