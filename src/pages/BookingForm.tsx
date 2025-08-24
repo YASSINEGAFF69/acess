@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2, AlertTriangle } from 'lucide-react';
 import { useBooking } from '../contexts/BookingContext';
 import { packages } from '../data/packages';
-import { googleSheetsService } from '../services/googleSheetsService';
+import { supabaseService } from '../services/supabaseService';
 
 interface PersonForm {
   firstName: string;
@@ -80,7 +80,7 @@ const BookingForm: React.FC = () => {
     if (!bookingData) return;
 
     try {
-      const validation = await googleSheetsService.validateBooking(bookingData.packageId, numberOfPeople);
+      const validation = await supabaseService.validateBooking(bookingData.packageId, numberOfPeople);
       if (!validation.valid) {
         setCapacityError(validation.error || 'Capacity limit exceeded');
       } else {
@@ -165,7 +165,7 @@ const BookingForm: React.FC = () => {
         travelers: data.people.slice(0, data.numberOfPeople)
       };
 
-      const { bookingReference, success } = await googleSheetsService.createBooking(bookingCreateData);
+      const { bookingReference, success } = await supabaseService.createBooking(bookingCreateData);
 
       // Set booking persons data in context
       setBookingPersonsData({

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Calendar, Users, Clock, MapPin, Check, ChevronsRight, Star, Percent, AlertTriangle, Loader2 } from 'lucide-react';
 import { packages } from '../data/packages';
 import { useBooking } from '../contexts/BookingContext';
-import { googleSheetsService, type PackageCapacityInfo } from '../services/googleSheetsService';
+import { supabaseService, type PackageCapacityInfo } from '../services/supabaseService';
 
 const PackageDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,7 +58,7 @@ const PackageDetail: React.FC = () => {
     try {
       setIsLoadingCapacity(true);
       setCapacityError(null);
-      const info = await googleSheetsService.checkPackageCapacity(packageData.id);
+      const info = await supabaseService.checkPackageCapacity(packageData.id);
       setCapacityInfo(info);
     } catch (error) {
       console.error('Error loading capacity info:', error);

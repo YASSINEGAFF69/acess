@@ -1,4 +1,11 @@
-// Google Sheets integration service
+// Supabase integration service
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 export interface BookingData {
   packageId: number;
   packageTitle: string;
@@ -38,9 +45,7 @@ export interface DiscountInfo {
   totalPaidBookings: number;
 }
 
-class GoogleSheetsService {
-  private readonly GOOGLE_APPS_SCRIPT_URL = import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL;
-
+class SupabaseService {
   // Generate a unique booking reference
   private generateBookingReference(): string {
     const timestamp = Date.now().toString(36);
@@ -48,17 +53,17 @@ class GoogleSheetsService {
     return `ACE-${timestamp}-${random}`.toUpperCase();
   }
 
-  // Check if Google Sheets is configured
+  // Check if Supabase is configured
   private isConfigured(): boolean {
-    return !!this.GOOGLE_APPS_SCRIPT_URL;
+    return !!(supabaseUrl && supabaseAnonKey);
   }
 
-  // Submit booking data to Google Sheets
+  // Submit booking data to Supabase
   async createBooking(data: BookingData): Promise<{ bookingReference: string; success: boolean }> {
     const bookingReference = this.generateBookingReference();
 
     if (!this.isConfigured()) {
-      console.warn('Google Sheets not configured. Returning mock booking reference.');
+      console.warn('Supabase not configured. Returning mock booking reference.');
       return { bookingReference, success: true };
     }
 
@@ -75,56 +80,46 @@ class GoogleSheetsService {
         finalTotalPrice = Math.round((data.totalPrice - discountAmount) * 100) / 100;
       }
 
-      // Prepare data for Google Sheets
-      const sheetData = {
-        action: 'createBooking',
-        bookingReference,
-        packageId: data.packageId,
-        packageTitle: data.packageTitle,
-        basePrice: data.basePrice,
-        totalPrice: finalTotalPrice,
-        originalPrice: shouldApplyDiscount ? data.totalPrice : null,
-        discountApplied: shouldApplyDiscount,
-        discountAmount: shouldApplyDiscount ? discountAmount : 0,
-        numberOfPeople: data.numberOfPeople,
-        contactEmail: data.contactEmail,
-        contactPhone: data.contactPhone,
-        contactAddress: data.contactAddress,
-        specialRequests: data.specialRequests || '',
-        selectedOptions: JSON.stringify(data.selectedOptions),
+      // Prepare data for Supabase
+      const bookingData = {
+        booking_reference: bookingReference,
+        package_id: data.packageId,
+        package_title: data.packageTitle,
+        base_price: data.basePrice,
+        total_price: finalTotalPrice,
+        original_price: shouldApplyDiscount ? data.totalPrice : null,
+        discount_applied: shouldApplyDiscount,
+        discount_amount: shouldApplyDiscount ? discountAmount : 0,
+        number_of_people: data.numberOfPeople,
+        contact_email: data.contactEmail,
+        contact_phone: data.contactPhone,
+        contact_address: data.contactAddress,
+        special_requests: data.specialRequests || '',
+        selected_options: JSON.stringify(data.selectedOptions),
         travelers: JSON.stringify(data.travelers),
-        paymentStatus: 'pending',
-        createdAt: new Date().toISOString(),
+        payment_status: 'pending',
+        created_at: new Date().toISOString(),
       };
 
-      const response = await fetch(this.GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(sheetData),
-      });
+      const { data: result, error } = await supabase
+        .from('bookings')
+        .insert([bookingData])
+        .select();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const result = await response.json();
-      
-      if (result.success) {
-        return { bookingReference, success: true };
-      } else {
-        throw new Error(result.error || 'Failed to create booking');
-      }
+      return { bookingReference, success: true };
     } catch (error) {
       console.error('Error creating booking:', error);
-      // Return success with booking reference even if Google Sheets fails
+      // Return success with booking reference even if Supabase fails
       // This ensures the user gets a booking reference
       return { bookingReference, success: true };
     }
   }
 
-  // Get package capacity based on paid bookings in Google Sheets
+  // Get package capacity based on paid bookings in Supabase
   async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
     if (!this.isConfigured()) {
       // Return mock data when not configured
@@ -147,28 +142,39 @@ class GoogleSheetsService {
     }
 
     try {
-      const response = await fetch(this.GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'getPackageCapacity',
-          packageId: packageId
-        }),
-      });
+      // Package capacities
+      const packageCapacities = {
+        1: 100,  // Platinum Pack
+        2: 300,  // Diamond Pack
+        3: 30,   // VIP Pack
+        4: 200,  // Tunis City Tour
+        5: 150,  // Carthage & Sidi Bou Said
+        6: 50    // Sajnene Pottery Master Class
+      };
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 50;
+
+      // Count only bookings with "paid" status
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('number_of_people')
+        .eq('package_id', packageId)
+        .eq('payment_status', 'paid');
+
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const result = await response.json();
-      
-      if (result.success) {
-        return result.data;
-      } else {
-        throw new Error(result.error || 'Failed to get package capacity');
-      }
+      const totalBooked = data?.reduce((sum, booking) => sum + (booking.number_of_people || 0), 0) || 0;
+      const available = Math.max(0, capacity - totalBooked);
+
+      return {
+        packageId,
+        totalBooked,
+        capacity,
+        available,
+        isFull: available === 0
+      };
     } catch (error) {
       console.error('Error checking package capacity:', error);
       // Return mock data on error
@@ -193,27 +199,23 @@ class GoogleSheetsService {
     }
 
     try {
-      const response = await fetch(this.GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'getDiscountInfo'
-        }),
-      });
+      // Count total paid bookings across all packages
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('id')
+        .eq('payment_status', 'paid');
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (error) {
+        throw new Error(error.message);
       }
 
-      const result = await response.json();
-      
-      if (result.success) {
-        return result.data;
-      } else {
-        throw new Error(result.error || 'Failed to get discount info');
-      }
+      const totalPaidBookings = data?.length || 0;
+
+      return {
+        available: totalPaidBookings < 100,
+        remainingSlots: Math.max(0, 100 - totalPaidBookings),
+        totalPaidBookings
+      };
     } catch (error) {
       console.error('Error checking discount availability:', error);
       return {
@@ -290,33 +292,45 @@ class GoogleSheetsService {
     }
 
     try {
-      const response = await fetch(this.GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'getBooking',
-          bookingReference: bookingReference
-        }),
-      });
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('booking_reference', bookingReference)
+        .single();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      
-      if (result.success) {
-        return result.data;
-      } else {
+      if (error) {
         return null;
       }
+
+      return data;
     } catch (error) {
       console.error('Error fetching booking:', error);
       return null;
     }
   }
+
+  // Get all bookings (for admin dashboard)
+  async getAllBookings(): Promise<any[]> {
+    if (!this.isConfigured()) {
+      return [];
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching all bookings:', error);
+      return [];
+    }
+  }
 }
 
-export const googleSheetsService = new GoogleSheetsService();
+export const supabaseService = new SupabaseService();

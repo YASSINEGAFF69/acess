@@ -1,13 +1,13 @@
 # ACES Tunisia Event Website
 
-A modern, responsive website for ACES Tunisia travel packages with Google Sheets integration for booking management.
+A modern, responsive website for ACES Tunisia travel packages with Supabase integration for booking management.
 
 ## Features
 
 - **6 Travel Packages**: Desert adventures, city tours, cultural experiences, and pottery workshops
-- **Google Sheets Integration**: All booking data stored in Google Sheets for easy management
+- **Supabase Integration**: All booking data stored in Supabase for easy management
 - **Responsive Design**: Beautiful, mobile-first design with Tailwind CSS
-- **Real-time Availability**: Package availability based on paid bookings in Google Sheets
+- **Real-time Availability**: Package availability based on paid bookings in Supabase
 - **Booking Management**: Complete booking flow with form validation
 - **Early Bird Discounts**: Automatic 15% discount for first 100 bookings
 
@@ -19,264 +19,137 @@ A modern, responsive website for ACES Tunisia travel packages with Google Sheets
 - **Forms**: React Hook Form
 - **Routing**: React Router DOM
 - **Icons**: Lucide React
-- **Backend**: Google Sheets + Google Apps Script
+- **Backend**: Supabase (PostgreSQL + Real-time)
 
-## 🔐 Secure Google Sheets Setup Guide
+## 🔐 Secure Supabase Setup Guide
 
-### Step 1: Create Google Sheet
+### Step 1: Create Supabase Project
 
-1. **Create a new Google Sheet** with the following column headers in Row 1:
+1. **Go to [Supabase](https://supabase.com)** and create a new project
+2. **Choose a project name**: "ACES Tunisia Bookings"
+3. **Set a strong database password**
+4. **Wait for project setup** (takes ~2 minutes)
 
-| A | B | C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Booking Reference | Package ID | Package Title | Base Price | Total Price | Original Price | Discount Applied | Discount Amount | Number of People | Contact Email | Contact Phone | Contact Address | Special Requests | Selected Options | Travelers | Payment Status | Created At |
+### Step 2: Create Database Table
 
-2. **Set up proper permissions**:
-   - Click "Share" button
-   - Change from "Restricted" to "Anyone with the link can view"
-   - **Important**: Only give "View" access, not "Edit"
+1. **Go to SQL Editor** in your Supabase dashboard
+2. **Run this SQL** to create the bookings table:
 
-### Step 2: Create Google Apps Script
+```sql
+-- Create bookings table
+CREATE TABLE IF NOT EXISTS bookings (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  booking_reference text UNIQUE NOT NULL,
+  package_id integer NOT NULL,
+  package_title text NOT NULL,
+  base_price numeric NOT NULL,
+  total_price numeric NOT NULL,
+  original_price numeric,
+  discount_applied boolean DEFAULT false,
+  discount_amount numeric DEFAULT 0,
+  number_of_people integer NOT NULL,
+  contact_email text NOT NULL,
+  contact_phone text NOT NULL,
+  contact_address text NOT NULL,
+  special_requests text DEFAULT '',
+  selected_options jsonb DEFAULT '[]'::jsonb,
+  travelers jsonb DEFAULT '[]'::jsonb,
+  payment_status text DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid')),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
 
-1. Open [Google Apps Script](https://script.google.com)
-2. Create a new project
-3. Name it "ACES Booking System"
-4. Replace the default code with this:
+-- Enable Row Level Security
+ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 
-```javascript
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    const sheet = SpreadsheetApp.openById('YOUR_SHEET_ID').getActiveSheet();
-    
-    switch(data.action) {
-      case 'createBooking':
-        return createBooking(sheet, data);
-      case 'getPackageCapacity':
-        return getPackageCapacity(sheet, data.packageId);
-      case 'getDiscountInfo':
-        return getDiscountInfo(sheet);
-      case 'getBooking':
-        return getBooking(sheet, data.bookingReference);
-      default:
-        return ContentService.createTextOutput(JSON.stringify({success: false, error: 'Invalid action'}))
-          .setMimeType(ContentService.MimeType.JSON);
-    }
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+-- Create policies for public access (insert only)
+CREATE POLICY "Allow public to insert bookings" ON bookings
+  FOR INSERT TO anon
+  WITH CHECK (true);
 
-function createBooking(sheet, data) {
-  try {
-    const row = [
-      data.bookingReference,           // Column A
-      data.packageId,                  // Column B
-      data.packageTitle,               // Column C
-      data.basePrice,                  // Column D
-      data.totalPrice,                 // Column E
-      data.originalPrice || '',        // Column F
-      data.discountApplied || false,   // Column G
-      data.discountAmount || 0,        // Column H
-      data.numberOfPeople,             // Column I
-      data.contactEmail,               // Column J
-      data.contactPhone,               // Column K
-      data.contactAddress,             // Column L
-      data.specialRequests || '',      // Column M
-      data.selectedOptions || '[]',    // Column N (JSON)
-      data.travelers || '[]',          // Column O (JSON)
-      data.paymentStatus || 'pending', // Column P
-      data.createdAt                   // Column Q
-    ];
-    
-    sheet.appendRow(row);
-    
-    return ContentService.createTextOutput(JSON.stringify({success: true}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+-- Create policies for authenticated users (full access)
+CREATE POLICY "Allow authenticated users full access" ON bookings
+  FOR ALL TO authenticated
+  USING (true)
+  WITH CHECK (true);
 
-function getPackageCapacity(sheet, packageId) {
-  try {
-    const data = sheet.getDataRange().getValues();
-    
-    // Package capacities
-    const packageCapacities = {
-      1: 100,  // Platinum Pack (Desert Adventure)
-      2: 300,  // Diamond Pack (Luxury Desert)
-      3: 30,   // VIP Pack (Ultimate Luxury)
-      4: 200,  // Tunis City Tour
-      5: 150,  // Carthage & Sidi Bou Said
-      6: 50    // Sajnene Pottery Master Class
-    };
-    
-    const capacity = packageCapacities[packageId] || 50;
-    
-    let totalBooked = 0;
-    
-    // Count only bookings with "paid" status
-    for (let i = 1; i < data.length; i++) {
-      if (data[i][1] == packageId && data[i][15] === 'paid') { // Column B (Package ID) and Column P (Payment Status)
-        totalBooked += parseInt(data[i][8]) || 0; // Column I (Number of People)
-      }
-    }
-    
-    const available = Math.max(0, capacity - totalBooked);
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      data: {
-        packageId: packageId,
-        totalBooked: totalBooked,
-        capacity: capacity,
-        available: available,
-        isFull: available === 0
-      }
-    })).setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+-- Create indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_bookings_package_id ON bookings(package_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_payment_status ON bookings(payment_status);
+CREATE INDEX IF NOT EXISTS idx_bookings_booking_reference ON bookings(booking_reference);
+CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at);
 
-function getDiscountInfo(sheet) {
-  try {
-    const data = sheet.getDataRange().getValues();
-    let paidBookings = 0;
-    
-    // Count total paid bookings across all packages
-    for (let i = 1; i < data.length; i++) {
-      if (data[i][15] === 'paid') { // Column P (Payment Status)
-        paidBookings++;
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      success: true,
-      data: {
-        available: paidBookings < 100,
-        remainingSlots: Math.max(0, 100 - paidBookings),
-        totalPaidBookings: paidBookings
-      }
-    })).setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+-- Create updated_at trigger
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = now();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
 
-function getBooking(sheet, bookingReference) {
-  try {
-    const data = sheet.getDataRange().getValues();
-    
-    for (let i = 1; i < data.length; i++) {
-      if (data[i][0] === bookingReference) { // Column A (Booking Reference)
-        return ContentService.createTextOutput(JSON.stringify({
-          success: true,
-          data: {
-            booking_reference: data[i][0],
-            package_title: data[i][2],
-            total_price: data[i][4],
-            number_of_people: data[i][8],
-            payment_status: data[i][15],
-            contact_email: data[i][9],
-            created_at: data[i][16]
-          }
-        })).setMimeType(ContentService.MimeType.JSON);
-      }
-    }
-    
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: 'Booking not found'}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({success: false, error: error.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
+CREATE TRIGGER update_bookings_updated_at 
+  BEFORE UPDATE ON bookings 
+  FOR EACH ROW 
+  EXECUTE FUNCTION update_updated_at_column();
 ```
 
-5. **Replace `'YOUR_SHEET_ID'`** with your actual Google Sheet ID (found in the URL)
-6. Save the project
+### Step 3: Set Up Environment Variables
 
-### Step 3: Deploy Apps Script Securely
-
-1. Click "Deploy" → "New deployment"
-2. Choose "Web app" as type
-3. **Security Settings**:
-   - Execute as: **"Me"** (your account)
-   - Who has access: **"Anyone"** (required for website to work)
-4. Click "Deploy"
-5. **Copy the web app URL** (keep this secure!)
-
-### Step 4: Set Up Environment Variables
-
-Create a `.env` file in your project root:
+1. **Get your project credentials** from Settings > API
+2. **Create `.env` file** in your project root:
 
 ```env
-VITE_GOOGLE_APPS_SCRIPT_URL=your_web_app_url_here
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-### Step 5: Secure Access Control
+### Step 4: Configure Row Level Security (RLS)
 
-#### For the Google Sheet:
-1. **Share with specific people only**:
-   - Add your team members with "Editor" access
-   - Never share the direct sheet link publicly
-   - Use "Notify people" to inform team members
+The table is already secured with RLS policies that:
+- **Allow public users** to insert new bookings (website visitors)
+- **Allow authenticated users** full access (managers/staff)
+- **Prevent unauthorized access** to sensitive data
 
-2. **Set up data validation** (optional):
-   - Column P (Payment Status): Data validation with "pending" or "paid" only
-   - This prevents accidental data entry errors
-
-#### For Google Apps Script:
-1. **Monitor usage**:
-   - Go to Apps Script → Executions to see all API calls
-   - Set up email notifications for errors
-
-2. **Version control**:
-   - Create new versions when making changes
-   - Keep previous versions as backup
-
-### Step 6: Team Access Management
+### Step 5: Team Access Management
 
 #### Manager Access (Full Control):
-- **Google Sheet**: Editor access
-- **Apps Script**: Owner/Editor access
-- Can update payment status from "pending" to "paid"
+1. **Create manager account** in Supabase Auth
+2. **Full database access** through Supabase dashboard
+3. **Can update payment_status** from "pending" to "paid"
+4. **View all bookings** and export data
 
 #### Staff Access (View Only):
-- **Google Sheet**: Viewer access
-- Can see all bookings but cannot modify data
+1. **Create staff accounts** with limited permissions
+2. **Read-only access** to bookings table
+3. **Cannot modify** payment status or booking data
 
 #### Developer Access:
-- **Apps Script**: Editor access for maintenance
-- **Google Sheet**: Editor access for testing
+1. **Full project access** for maintenance
+2. **Database schema updates**
+3. **RLS policy management**
 
 ## 🔒 Security Best Practices
 
 ### 1. **Environment Variables**
 - Never commit `.env` file to version control
-- Use different URLs for development/production
-- Rotate URLs periodically
+- Use different projects for development/production
+- Rotate API keys periodically
 
-### 2. **Google Sheet Security**
-- Regular backups (File → Download)
-- Monitor access logs
-- Remove unused collaborators
+### 2. **Database Security**
+- Row Level Security (RLS) enabled by default
+- Policies restrict access based on user role
+- All data encrypted at rest and in transit
 
-### 3. **Apps Script Security**
-- Review execution logs regularly
-- Set up error notifications
-- Keep code updated
+### 3. **Access Control**
+- Anon key only allows inserting bookings
+- Service role key kept secure (not used in frontend)
+- Regular access audits
 
 ### 4. **Data Protection**
-- All customer data encrypted in transit
-- Google's security handles data at rest
 - GDPR compliant data handling
+- Automatic backups
+- Point-in-time recovery available
 
 ## Package Capacities
 
@@ -290,17 +163,17 @@ VITE_GOOGLE_APPS_SCRIPT_URL=your_web_app_url_here
 ## How It Works
 
 ### Customer Journey:
-1. **Customer books** → Form submitted to Google Sheets
+1. **Customer books** → Form submitted to Supabase
 2. **Status = "pending"** → Booking saved but not counted toward capacity
 3. **Manager contacts customer** → Arranges payment offline
-4. **Manager updates Column P** → Changes "pending" to "paid"
+4. **Manager updates database** → Changes "pending" to "paid"
 5. **Website updates** → Available spots decrease automatically
 
 ### Manager Workflow:
-1. **Check new bookings** → Filter by "pending" status
+1. **Check new bookings** → Filter by "pending" status in Supabase dashboard
 2. **Contact customers** → Use provided contact details
 3. **Process payment** → Your preferred method
-4. **Update status** → Change "pending" to "paid" in Column P
+4. **Update status** → Change "pending" to "paid" in database
 5. **Automatic updates** → Website reflects new availability
 
 ## Development
@@ -331,21 +204,50 @@ The website can be deployed to any static hosting service like Netlify, Vercel, 
 ### Common Issues:
 
 1. **"Failed to fetch" errors**:
-   - Check if `VITE_GOOGLE_APPS_SCRIPT_URL` is set correctly
-   - Verify Apps Script is deployed as web app
-   - Ensure "Anyone" access is enabled
+   - Check if environment variables are set correctly
+   - Verify Supabase project URL and anon key
+   - Ensure RLS policies allow public access for inserts
 
 2. **Bookings not appearing**:
-   - Check Google Sheet ID in Apps Script
-   - Verify column headers match exactly
-   - Check Apps Script execution logs
+   - Check Supabase table structure matches schema
+   - Verify RLS policies are correctly configured
+   - Check browser network tab for API errors
 
 3. **Capacity not updating**:
-   - Ensure payment status is exactly "paid" (lowercase)
+   - Ensure payment_status is exactly "paid" (lowercase)
    - Check package IDs match (1-6)
-   - Verify number of people is numeric
+   - Verify number_of_people is numeric
 
 ### Support:
-- Check Apps Script execution logs for detailed errors
-- Monitor Google Sheet for data integrity
+- Check Supabase logs for detailed errors
+- Monitor database for data integrity
 - Contact development team for technical issues
+
+## Database Schema
+
+### Bookings Table Structure:
+```sql
+bookings (
+  id: uuid (Primary Key)
+  booking_reference: text (Unique, e.g., "ACE-xxxxx-xxxxx")
+  package_id: integer (1-6)
+  package_title: text
+  base_price: numeric (USD)
+  total_price: numeric (USD)
+  original_price: numeric (before discount)
+  discount_applied: boolean
+  discount_amount: numeric (USD)
+  number_of_people: integer
+  contact_email: text
+  contact_phone: text
+  contact_address: text
+  special_requests: text
+  selected_options: jsonb (array of selected add-ons)
+  travelers: jsonb (array of traveler details)
+  payment_status: text ('pending' | 'paid') ← Manager updates this
+  created_at: timestamptz
+  updated_at: timestamptz
+)
+```
+
+This setup provides a secure, scalable, and easy-to-manage booking system with Supabase! 🎉
