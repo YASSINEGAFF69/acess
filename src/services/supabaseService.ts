@@ -1,10 +1,13 @@
 // Supabase integration service
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Only create Supabase client if environment variables are provided
+export const supabase = supabaseUrl && supabaseAnonKey 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null;
 
 export interface BookingData {
   packageId: number;
@@ -55,7 +58,7 @@ class SupabaseService {
 
   // Check if Supabase is configured
   private isConfigured(): boolean {
-    return !!(supabaseUrl && supabaseAnonKey);
+    return !!(supabase && supabaseUrl && supabaseAnonKey);
   }
 
   // Submit booking data to Supabase
@@ -63,7 +66,7 @@ class SupabaseService {
     const bookingReference = this.generateBookingReference();
 
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. Returning mock booking reference.');
+      console.warn('Supabase not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
       return { bookingReference, success: true };
     }
 
@@ -101,7 +104,7 @@ class SupabaseService {
         created_at: new Date().toISOString(),
       };
 
-      const { data: result, error } = await supabase
+      const { data: result, error } = await supabase!
         .from('bookings')
         .insert([bookingData])
         .select();
@@ -122,7 +125,7 @@ class SupabaseService {
   // Get package capacity based on paid bookings in Supabase
   async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
     if (!this.isConfigured()) {
-      // Return mock data when not configured
+      console.warn('Supabase not configured. Using mock capacity data.');
       const mockCapacities = {
         1: { available: 45, total: 100 },
         2: { available: 180, total: 300 },
@@ -155,7 +158,7 @@ class SupabaseService {
       const capacity = packageCapacities[packageId as keyof typeof packageCapacities] || 50;
 
       // Count only bookings with "paid" status
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('bookings')
         .select('number_of_people')
         .eq('package_id', packageId)
@@ -191,6 +194,7 @@ class SupabaseService {
   // Check discount availability (first 100 paid bookings)
   async checkDiscountAvailability(): Promise<DiscountInfo> {
     if (!this.isConfigured()) {
+      console.warn('Supabase not configured. Using mock discount data.');
       return {
         available: true,
         remainingSlots: 45,
@@ -200,7 +204,7 @@ class SupabaseService {
 
     try {
       // Count total paid bookings across all packages
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('bookings')
         .select('id')
         .eq('payment_status', 'paid');
@@ -280,6 +284,7 @@ class SupabaseService {
   // Get booking by reference (for confirmation)
   async getBookingByReference(bookingReference: string): Promise<any> {
     if (!this.isConfigured()) {
+      console.warn('Supabase not configured. Using mock booking data.');
       return {
         booking_reference: bookingReference,
         package_title: 'Mock Package',
@@ -292,7 +297,7 @@ class SupabaseService {
     }
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('bookings')
         .select('*')
         .eq('booking_reference', bookingReference)
@@ -312,11 +317,12 @@ class SupabaseService {
   // Get all bookings (for admin dashboard)
   async getAllBookings(): Promise<any[]> {
     if (!this.isConfigured()) {
+      console.warn('Supabase not configured. No bookings available.');
       return [];
     }
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabase!
         .from('bookings')
         .select('*')
         .order('created_at', { ascending: false });
