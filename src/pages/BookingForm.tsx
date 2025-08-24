@@ -649,8 +649,8 @@ const BookingForm: React.FC = () => {
                     
                     <div className="mb-6">
                       <p className="text-gray-600 mb-4">
-                        By proceeding to payment, you agree to our terms and conditions, including our cancellation policy
-                        and privacy policy. All prices are in USD.
+                        By submitting this booking, you agree to our terms and conditions, including our cancellation policy
+                        and privacy policy. All prices are in USD. Payment will be arranged after booking confirmation.
                       </p>
                       
                       <div className="flex items-start mb-2">
