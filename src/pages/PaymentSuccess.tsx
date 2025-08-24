@@ -48,6 +48,7 @@ const PaymentSuccess: React.FC = () => {
                 Return to Home
               </Link>
             </motion.div>
+          </div>
           <p className="text-gray-600">Loading payment details...</p>
         </div>
       </div>
