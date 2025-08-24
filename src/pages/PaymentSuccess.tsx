@@ -11,8 +11,8 @@ export default function PaymentSuccess() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">No Booking Found</h1>
-          <p className="text-gray-600 mb-6">We couldn't find your booking details.</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">No Booking Data Found</h1>
+          <p className="text-gray-600 mb-6">We couldn't find your booking information.</p>
           <button
             onClick={() => navigate('/')}
             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
@@ -32,7 +32,7 @@ export default function PaymentSuccess() {
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
           <p className="text-lg text-gray-600">
-            Your booking has been successfully submitted. We'll contact you soon to arrange payment.
+            Your booking has been successfully submitted. We'll contact you soon to confirm details and arrange payment.
           </p>
         </div>
 
@@ -90,8 +90,8 @@ export default function PaymentSuccess() {
           <h3 className="font-semibold text-blue-900 mb-3">What's Next?</h3>
           <ul className="space-y-2 text-sm text-blue-800">
             <li>• Our team will contact you within 24 hours to confirm your booking</li>
-            <li>• We'll arrange payment details and provide you with payment options</li>
-            <li>• Once payment is confirmed, you'll receive your complete travel itinerary</li>
+            <li>• We'll discuss payment options and finalize all details</li>
+            <li>• Once everything is confirmed, you'll receive your complete travel itinerary</li>
             <li>• Keep your booking reference handy: <strong>{bookingData.bookingReference}</strong></li>
           </ul>
         </div>
@@ -107,7 +107,7 @@ export default function PaymentSuccess() {
           </button>
           <button
             onClick={() => navigate('/packages')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-secondary text-white rounded-lg hover:bg-accent transition-colors"
           >
             Browse More Packages
           </button>

@@ -452,7 +452,7 @@ const PackageDetail: React.FC = () => {
               
               {!capacityInfo?.isFull && (
                 <div className="mt-4 text-center text-sm text-gray-500">
-                  No payment required now. You'll complete payment after reservation.
+                  No payment required now. We'll contact you to arrange payment after your booking.
                 </div>
               )}
             </div>
