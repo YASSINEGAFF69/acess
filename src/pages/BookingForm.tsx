@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
-import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2, AlertTriangle } from 'lucide-react';
+import { Check, ChevronRight, User, Mail, Phone, Calendar, MapPin, Users, AlertCircle, Loader2, AlertTriangle, Plus, Minus } from 'lucide-react';
 import { useBooking } from '../contexts/BookingContext';
 import { packages } from '../data/packages';
 import { supabaseService } from '../services/supabaseService';
@@ -30,13 +30,13 @@ interface BookingFormData {
 const BookingForm: React.FC = () => {
   const navigate = useNavigate();
   const { bookingData, setBookingPersonsData, setCurrentBookingReference, setBookingSuccess } = useBooking();
-  const [currentStep, setCurrentStep] = useState(1);
   const [numberOfPeople, setNumberOfPeople] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [capacityError, setCapacityError] = useState<string | null>(null);
+  const [currentStep, setCurrentStep] = useState(1);
   
-  const { register, handleSubmit, formState: { errors }, watch, trigger } = useForm<BookingFormData>({
+  const { register, handleSubmit, formState: { errors }, watch, trigger, setValue, getValues } = useForm<BookingFormData>({
     defaultValues: {
       numberOfPeople: 1,
       people: [{ firstName: '', lastName: '', email: '', phone: '', birthDate: '', idNumber: '' }],
@@ -62,25 +62,39 @@ const BookingForm: React.FC = () => {
   
   // Update people array when number of people changes
   useEffect(() => {
-    if (watchNumberOfPeople !== numberOfPeople) {
-      setNumberOfPeople(watchNumberOfPeople || 1);
-      // Clear capacity error when number changes
+    const currentPeople = getValues('people') || [];
+    const targetCount = watchNumberOfPeople || 1;
+    
+    if (currentPeople.length !== targetCount) {
+      const newPeople = [...currentPeople];
+      
+      // Add empty person objects if we need more
+      while (newPeople.length < targetCount) {
+        newPeople.push({ firstName: '', lastName: '', email: '', phone: '', birthDate: '', idNumber: '' });
+      }
+      
+      // Remove excess person objects if we have too many
+      while (newPeople.length > targetCount) {
+        newPeople.pop();
+      }
+      
+      setValue('people', newPeople);
       setCapacityError(null);
     }
-  }, [watchNumberOfPeople, numberOfPeople]);
+  }, [watchNumberOfPeople, setValue, getValues]);
 
   // Validate capacity when number of people changes
   useEffect(() => {
-    if (bookingData && numberOfPeople > 1) {
+    if (bookingData && watchNumberOfPeople > 1) {
       validateCapacity();
     }
-  }, [numberOfPeople, bookingData]);
+  }, [watchNumberOfPeople, bookingData]);
 
   const validateCapacity = async () => {
     if (!bookingData) return;
 
     try {
-      const validation = await supabaseService.validateBooking(bookingData.packageId, numberOfPeople);
+      const validation = await supabaseService.validateBooking(bookingData.packageId, watchNumberOfPeople);
       if (!validation.valid) {
         setCapacityError(validation.error || 'Capacity limit exceeded');
       } else {
@@ -90,6 +104,11 @@ const BookingForm: React.FC = () => {
       console.error('Error validating capacity:', error);
       setCapacityError('Unable to validate booking capacity');
     }
+  };
+  
+  const updateNumberOfPeople = (newCount: number) => {
+    const clampedCount = Math.max(1, Math.min(10, newCount));
+    setValue('numberOfPeople', clampedCount);
   };
 
   const handleNextStep = async () => {
@@ -105,7 +124,7 @@ const BookingForm: React.FC = () => {
       fieldsToValidate = ['numberOfPeople', 'contactDetails.email', 'contactDetails.phone', 'contactDetails.address'];
     } else if (currentStep === 2) {
       // Validate fields for all people
-      for (let i = 0; i < numberOfPeople; i++) {
+      for (let i = 0; i < watchNumberOfPeople; i++) {
         fieldsToValidate.push(
           `people.${i}.firstName`,
           `people.${i}.lastName`,
@@ -279,18 +298,19 @@ const BookingForm: React.FC = () => {
                     <div className="flex items-center border border-gray-300 rounded-lg p-1 w-40">
                       <button 
                         type="button"
-                        onClick={() => setNumberOfPeople(Math.max(1, numberOfPeople - 1))}
+                        onClick={() => updateNumberOfPeople((watchNumberOfPeople || 1) - 1)}
                         className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-md"
+                        disabled={watchNumberOfPeople <= 1}
                       >
-                        -
+                        <Minus className="h-4 w-4" />
                       </button>
                       <input
                         type="number"
                         min="1"
                         max="10"
                         className="flex-1 text-center border-none p-2 focus:outline-none focus:ring-0"
-                        value={numberOfPeople}
-                        onChange={(e) => setNumberOfPeople(parseInt(e.target.value) || 1)}
+                        value={watchNumberOfPeople || 1}
+                        onChange={(e) => updateNumberOfPeople(parseInt(e.target.value) || 1)}
                         {...register('numberOfPeople', { 
                           required: 'Required',
                           min: { value: 1, message: 'At least 1 traveler required' },
@@ -299,10 +319,11 @@ const BookingForm: React.FC = () => {
                       />
                       <button 
                         type="button"
-                        onClick={() => setNumberOfPeople(Math.min(10, numberOfPeople + 1))}
+                        onClick={() => updateNumberOfPeople((watchNumberOfPeople || 1) + 1)}
                         className="w-10 h-10 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-md"
+                        disabled={watchNumberOfPeople >= 10}
                       >
-                        +
+                        <Plus className="h-4 w-4" />
                       </button>
                     </div>
                     {errors.numberOfPeople && (
@@ -407,7 +428,7 @@ const BookingForm: React.FC = () => {
                 <div>
                   <h1 className="font-display text-3xl font-bold mb-6 text-gray-800">Traveler Details</h1>
                   
-                  {Array.from({ length: numberOfPeople }).map((_, index) => (
+                  {Array.from({ length: watchNumberOfPeople || 1 }).map((_, index) => (
                     <div key={index} className="bg-white rounded-xl shadow-lg p-8 mb-6">
                       <h2 className="font-bold text-xl mb-6 flex items-center text-gray-800">
                         <User className="h-5 w-5 mr-2 text-primary" />
@@ -611,7 +632,7 @@ const BookingForm: React.FC = () => {
                       
                       <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-300">
                         <span>Total:</span>
-                        <span className="text-secondary">${totalPrice} USD</span>
+                        <span className="text-secondary">${(bookingData.totalPrice * (watchNumberOfPeople || 1))} USD</span>
                       </div>
                     </div>
                   </div>
