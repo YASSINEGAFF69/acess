@@ -1,11 +1,11 @@
 // Supabase integration service
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Only create Supabase client if environment variables are provided
-export const supabase = supabaseUrl && supabaseAnonKey 
+export const supabase = supabaseUrl && supabaseAnonKey && supabaseUrl !== 'your_supabase_project_url' && supabaseAnonKey !== 'your_supabase_anon_key'
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
@@ -58,7 +58,15 @@ class SupabaseService {
 
   // Check if Supabase is configured
   private isConfigured(): boolean {
-    return !!(supabase && supabaseUrl && supabaseAnonKey);
+    return !!(
+      supabase && 
+      supabaseUrl && 
+      supabaseAnonKey && 
+      supabaseUrl !== 'your_supabase_project_url' && 
+      supabaseAnonKey !== 'your_supabase_anon_key' &&
+      supabaseUrl.startsWith('https://') &&
+      supabaseUrl.includes('.supabase.co')
+    );
   }
 
   // Submit booking data to Supabase
@@ -66,7 +74,7 @@ class SupabaseService {
     const bookingReference = this.generateBookingReference();
 
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
+      console.warn('Supabase not configured properly. Booking will be simulated. Please check your .env file and ensure you have valid Supabase credentials.');
       return { bookingReference, success: true };
     }
 
@@ -110,22 +118,22 @@ class SupabaseService {
         .select();
 
       if (error) {
+        console.error('Supabase error:', error);
         throw new Error(error.message);
       }
 
+      console.log('Booking created successfully:', result);
       return { bookingReference, success: true };
     } catch (error) {
       console.error('Error creating booking:', error);
-      // Return success with booking reference even if Supabase fails
-      // This ensures the user gets a booking reference
-      return { bookingReference, success: true };
+      throw error; // Re-throw to handle in the component
     }
   }
 
   // Get package capacity based on paid bookings in Supabase
   async checkPackageCapacity(packageId: number): Promise<PackageCapacityInfo> {
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. Using mock capacity data.');
+      console.warn('Supabase not configured properly. Using mock capacity data. Please check your .env file.');
       const mockCapacities = {
         1: { available: 45, total: 100 },
         2: { available: 180, total: 300 },
@@ -194,7 +202,7 @@ class SupabaseService {
   // Check discount availability (first 100 paid bookings)
   async checkDiscountAvailability(): Promise<DiscountInfo> {
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. Using mock discount data.');
+      console.warn('Supabase not configured properly. Using mock discount data. Please check your .env file.');
       return {
         available: true,
         remainingSlots: 45,
@@ -284,7 +292,7 @@ class SupabaseService {
   // Get booking by reference (for confirmation)
   async getBookingByReference(bookingReference: string): Promise<any> {
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. Using mock booking data.');
+      console.warn('Supabase not configured properly. Using mock booking data. Please check your .env file.');
       return {
         booking_reference: bookingReference,
         package_title: 'Mock Package',
@@ -317,7 +325,7 @@ class SupabaseService {
   // Get all bookings (for admin dashboard)
   async getAllBookings(): Promise<any[]> {
     if (!this.isConfigured()) {
-      console.warn('Supabase not configured. No bookings available.');
+      console.warn('Supabase not configured properly. No bookings available. Please check your .env file.');
       return [];
     }
 
