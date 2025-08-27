@@ -75,6 +75,26 @@ class SupabaseService {
 
     if (!this.isConfigured()) {
       console.warn('Supabase not configured properly. Booking will be simulated. Please check your .env file and ensure you have valid Supabase credentials.');
+      
+      // Apply discount for simulation
+      const discountInfo = { available: true, remainingSlots: 45, totalPaidBookings: 55 };
+      const shouldApplyDiscount = discountInfo.available;
+      
+      let finalTotalPrice = data.totalPrice;
+      let discountAmount = 0;
+      
+      if (shouldApplyDiscount) {
+        discountAmount = Math.round(data.totalPrice * 0.15 * 100) / 100;
+        finalTotalPrice = Math.round((data.totalPrice - discountAmount) * 100) / 100;
+      }
+      
+      console.log('Simulated booking with discount:', {
+        originalPrice: data.totalPrice,
+        discountAmount,
+        finalPrice: finalTotalPrice,
+        discountApplied: shouldApplyDiscount
+      });
+      
       return { bookingReference, success: true };
     }
 
@@ -98,7 +118,7 @@ class SupabaseService {
         package_title: data.packageTitle,
         base_price: data.basePrice,
         total_price: finalTotalPrice,
-        original_price: shouldApplyDiscount ? data.totalPrice : null,
+        original_price: data.totalPrice,
         discount_applied: shouldApplyDiscount,
         discount_amount: shouldApplyDiscount ? discountAmount : 0,
         number_of_people: data.numberOfPeople,
@@ -123,6 +143,14 @@ class SupabaseService {
       }
 
       console.log('Booking created successfully:', result);
+      console.log('Discount details:', {
+        originalPrice: data.totalPrice,
+        discountAmount,
+        finalPrice: finalTotalPrice,
+        discountApplied: shouldApplyDiscount,
+        remainingDiscountSlots: discountInfo.remainingSlots
+      });
+      
       return { bookingReference, success: true };
     } catch (error) {
       console.error('Error creating booking:', error);
