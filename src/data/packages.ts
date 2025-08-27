@@ -19,7 +19,7 @@ export const packages = [
     fullDescription: "Experience the magic of Southern Tunisia with our Platinum Pack. Stay in traditional Berber tents at îlot Palmier Tozeur and immerse yourself in the authentic desert lifestyle. This adventure includes visits to iconic locations, traditional activities, and unforgettable experiences under the desert stars.",
     included: [
       "Accommodation in Berber tents",
-      "All transportation",
+      "Private transportation",
       "All mentioned meals",
       "Guided visits and tours",
       "Desert parties and entertainment",
@@ -62,21 +62,21 @@ export const packages = [
     options: [
       {
         id: 1,
-        title: "Private Desert Experience",
-        description: "Exclusive desert camp setup with personal guide",
-        price: 150
+        title: "quad biking experience",
+        description: "",
+        price: 50
       },
       {
         id: 2,
         title: "Camel Trekking Adventure",
         description: "Extended camel ride through the dunes",
-        price: 75
+        price: 50
       },
       {
         id: 3,
         title: "Traditional Cooking Class",
         description: "Learn to prepare authentic Tunisian dishes",
-        price: 45
+        price: 50
       }
     ],
     pricingTiers: {
@@ -119,7 +119,7 @@ export const packages = [
     fullDescription: "Discover the wonders of the Sahara Desert while enjoying luxury accommodations at the 5-star Palm Beach Hotel. This premium package combines adventure with comfort, offering the perfect balance of cultural immersion and modern amenities.",
     included: [
       "5-star hotel accommodation",
-      "All transportation",
+      "Private transportation",
       "All mentioned meals",
       "Guided visits and tours", 
       "Desert parties and entertainment",
@@ -148,15 +148,21 @@ export const packages = [
     options: [
       {
         id: 1,
-        title: "Spa Package",
-        description: "Luxury spa treatments and wellness sessions",
-        price: 120
+        title: "quad biking experience",
+        description: "",
+        price: 50
       },
       {
         id: 2,
-        title: "Private Balcony Dinner",
-        description: "Romantic dinner on private hotel balcony",
-        price: 95
+        title: "Camel Trekking Adventure",
+        description: "Extended camel ride through the dunes",
+        price: 50
+      },
+      {
+        id: 3,
+        title: "Traditional Cooking Class",
+        description: "Learn to prepare authentic Tunisian dishes",
+        price: 50
       }
     ],
     pricingTiers: {
@@ -202,7 +208,7 @@ export const packages = [
       "All gourmet meals",
       "Private guided tours",
       "Exclusive desert experiences",
-      "Premium activities",
+      "Traditional activities",
       "Personal concierge service",
       "Premium cocktails and beverages"
     ],
@@ -227,15 +233,15 @@ export const packages = [
     options: [
       {
         id: 1,
-        title: "Private Helicopter Tour",
-        description: "Aerial view of the Sahara Desert",
-        price: 500
+        title: "Skydiving Experience",
+        description: "",
+        price: 750
       },
       {
         id: 2,
-        title: "Personal Photography Session",
+        title: "Profesional shooting session",
         description: "Professional photographer for your journey",
-        price: 200
+        price: 750
       }
     ],
     pricingTiers: {
