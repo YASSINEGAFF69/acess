@@ -279,17 +279,6 @@ const PackageDetail: React.FC = () => {
                         className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
                       />
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-          
-          {/* Booking Sidebar */}
-          <div className="md:w-4/12">
-            <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-              <h3 className="font-display text-2xl font-bold mb-4 text-gray-800">Book This Package</h3>
-              
               {/* Availability Status */}
               {isLoadingCapacity ? (
                 <div className="mb-6 p-4 bg-gray-50 rounded-lg">

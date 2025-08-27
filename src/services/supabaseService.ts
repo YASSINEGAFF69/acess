@@ -88,13 +88,6 @@ class SupabaseService {
         finalTotalPrice = Math.round((data.totalPrice - discountAmount) * 100) / 100;
       }
       
-      console.log('Simulated booking with discount:', {
-        originalPrice: data.totalPrice,
-        discountAmount,
-        finalPrice: finalTotalPrice,
-        discountApplied: shouldApplyDiscount
-      });
-      
       return { bookingReference, success: true };
     }
 
@@ -143,13 +136,6 @@ class SupabaseService {
       }
 
       console.log('Booking created successfully:', result);
-      console.log('Discount details:', {
-        originalPrice: data.totalPrice,
-        discountAmount,
-        finalPrice: finalTotalPrice,
-        discountApplied: shouldApplyDiscount,
-        remainingDiscountSlots: discountInfo.remainingSlots
-      });
       
       return { bookingReference, success: true };
     } catch (error) {

@@ -50,7 +50,7 @@ const PackagesSection: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             Choose from our carefully crafted packages to experience the beauty and magic of Southern Tunisia. 
-            Each package offers unique accommodations and unforgettable experiences.
+            Each package offers unique accommodations and unforgettable experiences with automatic 15% early bird discount.
           </motion.p>
         </div>
 
